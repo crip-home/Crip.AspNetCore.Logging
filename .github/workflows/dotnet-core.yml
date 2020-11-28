@@ -1,0 +1,39 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Replace tokens
+      uses: cschleiden/replace-tokens@v1.0
+      with:
+        tokenPrefix: \#\{
+        tokenSuffix: \}\#
+        files: '["Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj"]'
+      env:
+        VERSION: 1.0.${GITHUB_RUN_ID}.${GITHUB_RUN_NUMBER}
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.404
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Build
+      run: dotnet build Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj --configuration Release --no-restore -p:Version=1.0.${GITHUB_RUN_ID}.${GITHUB_RUN_NUMBER}
+    - name: Pack
+      run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj --configuration Release --no-build
+    - name: Publish NuGet
+      run: dotnet nuget push "bin/Release/Crip.AspNetCore.Logging.1.0.${GITHUB_RUN_ID}.${GITHUB_RUN_NUMBER}.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/crip-home/index.json
+# API key to authenticate with NuGet server
+# ${{ secrets.NUGET_API_KEY }}
