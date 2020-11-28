@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using Xunit;
 
 namespace Crip.AspNetCore.Tests
 {
@@ -11,14 +10,13 @@ namespace Crip.AspNetCore.Tests
         public static string LoadResource(this object src, string resource)
         {
             var asm = src.GetType().Assembly;
-            var name = asm
-                .GetManifestResourceNames()
-                .First(n => n.Contains(resource));
+            var name =
+                asm.GetManifestResourceNames().First(n => n.Contains(resource)) ??
+                throw new Exception($"Could not find {resource} manifest file.");
 
-            using Stream stream = asm.GetManifestResourceStream(name);
+            using Stream stream = asm.GetManifestResourceStream(name)!;
             using var reader = new StreamReader(stream);
 
-            Assert.NotNull(reader);
             return reader.ReadToEnd();
         }
 
