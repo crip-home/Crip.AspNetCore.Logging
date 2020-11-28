@@ -37,6 +37,4 @@ jobs:
     - name: Pack NuGet
       run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-source -p:PackageVersion=${{ env.APP_VERSION }}
     - name: Publish NuGet
-      run: dotnet nuget push "**/bin/Release/*.nupkg"
-# API key to authenticate with NuGet server
-# ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg"
