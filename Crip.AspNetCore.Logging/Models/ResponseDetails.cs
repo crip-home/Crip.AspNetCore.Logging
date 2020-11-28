@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#pragma warning disable 1591
+#pragma warning disable SA1600
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -24,7 +27,6 @@ namespace Crip.AspNetCore.Logging
                 return;
             }
 
-
             StatusCode = (HttpStatusCode)response.StatusCode;
             ContentType = response.ContentType;
             Headers = response.Headers;
@@ -49,11 +51,16 @@ namespace Crip.AspNetCore.Logging
         }
 
         public IStopwatch? Stopwatch { get; init; }
+
         public string? Time { get; init; }
-        public HttpStatusCode StatusCode { get; init; }
+
+        public HttpStatusCode? StatusCode { get; init; }
+
         public string? ContentType { get; init; }
+
         public IDictionary<string, StringValues>? Headers { get; init; }
-        public Stream Content { get; init; }
+
+        public Stream? Content { get; init; }
 
         public static ResponseDetails From(HttpResponseMessage? response, IStopwatch? stopwatch) =>
             response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch);

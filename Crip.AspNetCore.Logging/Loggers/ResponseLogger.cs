@@ -49,7 +49,7 @@ namespace Crip.AspNetCore.Logging
 
         private StringBuilder ResponseHead(RequestDetails request, ResponseDetails response)
         {
-            var status = $"{(int)response.StatusCode} {response.StatusCode}";
+            var status = $"{(int?)response.StatusCode} {response.StatusCode}";
             var text = new StringBuilder($"{request.Protocol} {status}{NewLine}");
 
             AppendHeaders(text, response.Headers);

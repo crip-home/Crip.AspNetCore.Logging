@@ -63,10 +63,7 @@ namespace Crip.AspNetCore.Logging
                     context.Response.Body = temp;
                 }
 
-                // -------------------------------------------------------------
                 await _next(context);
-                // -------------------------------------------------------------
-
                 stopwatch.Stop();
 
                 await logger.LogResponse(stopwatch);

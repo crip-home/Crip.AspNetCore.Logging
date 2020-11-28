@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿#pragma warning disable 1591
+#pragma warning disable SA1600
+
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -56,16 +60,24 @@ namespace Crip.AspNetCore.Logging
         }
 
         public string? Protocol { get; init; }
-        public string? Method { get; init; }
-        public string? Scheme { get; init; }
-        public string? Host { get; init; }
-        public string? Path { get; init; }
-        public string? QueryString { get; init; }
-        public string? Url { get; init; }
-        public string? ContentType { get; init; }
-        public IDictionary<string, StringValues>? Headers { get; init; }
-        public Stream? Content { get; init; }
 
+        public string? Method { get; init; }
+
+        public string? Scheme { get; init; }
+
+        public string? Host { get; init; }
+
+        public string? Path { get; init; }
+
+        public string? QueryString { get; init; }
+
+        public string? Url { get; init; }
+
+        public string? ContentType { get; init; }
+
+        public IDictionary<string, StringValues>? Headers { get; init; }
+
+        public Stream? Content { get; init; }
 
         public static RequestDetails From(HttpRequestMessage? request) =>
             request is null ? new RequestDetails() : new RequestDetails(request);

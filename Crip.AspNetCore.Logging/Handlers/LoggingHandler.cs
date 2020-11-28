@@ -18,14 +18,15 @@ namespace Crip.AspNetCore.Logging.Handlers
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggingHandler{T}"/> class.
         /// </summary>
-        public LoggingHandler(
-            ILogger<T> logger,
-            IHttpLogger httpLogger)
+        /// <param name="logger">The actual log writer.</param>
+        /// <param name="httpLogger">The HTTP request/response detail logger.</param>
+        public LoggingHandler(ILogger<T> logger, IHttpLogger httpLogger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _httpLogger = httpLogger;
         }
 
+        /// <inheritdoc />
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
             var stopwatch = CreateStopwatch();
@@ -60,7 +61,6 @@ namespace Crip.AspNetCore.Logging.Handlers
 
             return response;
         }
-
 
         /// <summary>
         /// Factory method to create Stopwatch wrapper instance.

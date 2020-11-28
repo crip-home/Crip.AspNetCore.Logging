@@ -15,7 +15,7 @@ namespace Crip.AspNetCore.Logging
                 return;
             }
 
-            var status = $"{(int)response.StatusCode} {response.StatusCode}";
+            var status = $"{(int?)response.StatusCode} {response.StatusCode}";
             var message = $"{request.Method} {request.Url} at {response.Time} with {status}";
 
             logger.LogInformation(message);

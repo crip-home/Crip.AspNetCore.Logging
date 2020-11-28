@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Crip.AspNetCore.Logging
 {
+    /// <summary>
+    /// HTTP request/response detail logger.
+    /// </summary>
     public class HttpLogger : IHttpLogger
     {
         private readonly ILogger _logger;
@@ -14,6 +17,14 @@ namespace Crip.AspNetCore.Logging
         private readonly IBasicInfoLogger _basicInfoLogger;
         private readonly IEnumerable<IHttpRequestPredicate> _requestPredicates;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpLogger"/> class.
+        /// </summary>
+        /// <param name="logger">Actual logger instance to use as writer.</param>
+        /// <param name="requestLogger">Request detail logger.</param>
+        /// <param name="responseLogger">Response detail logger.</param>
+        /// <param name="basicInfoLogger">Basic information logger.</param>
+        /// <param name="requestPredicates">Request path predicates to determine is the log message required.</param>
         public HttpLogger(
             ILogger logger,
             IRequestLogger requestLogger,
@@ -28,6 +39,7 @@ namespace Crip.AspNetCore.Logging
             _requestPredicates = requestPredicates;
         }
 
+        /// <inheritdoc />
         public async Task LogRequest(RequestDetails request)
         {
             if (ShouldSkip(request))
@@ -39,6 +51,7 @@ namespace Crip.AspNetCore.Logging
             await _requestLogger.LogRequest(_logger, request);
         }
 
+        /// <inheritdoc />
         public async Task LogResponse(RequestDetails request, ResponseDetails response)
         {
             if (ShouldSkip(request))
@@ -51,6 +64,7 @@ namespace Crip.AspNetCore.Logging
             await _responseLogger.LogResponse(_logger, request, response);
         }
 
+        /// <inheritdoc />
         public Task LogInfo(RequestDetails request, ResponseDetails response)
         {
             if (ShouldSkip(request))
@@ -66,6 +80,7 @@ namespace Crip.AspNetCore.Logging
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public void LogError(
             Exception exception,
             RequestDetails? request,
@@ -80,16 +95,20 @@ namespace Crip.AspNetCore.Logging
             _logger.LogError(exception, "Error during HTTP request processing");
         }
 
-        private IDisposable RequestScope(RequestDetails request)
+        private IDisposable RequestScope(RequestDetails? request)
         {
-            RequestScope scope = new(request.Url, request.Method);
+            if (request is null)
+            {
+                return _logger.BeginScope(new RequestScope());
+            }
 
-            return _logger.BeginScope(scope);
+            return _logger.BeginScope(
+                new RequestScope(request.Url, request.Method));
         }
 
         private IDisposable ResponseScope(ResponseDetails response)
         {
-            ResponseScope scope = new((int)response.StatusCode, response.Stopwatch);
+            ResponseScope scope = new((int?)response.StatusCode, response.Stopwatch);
 
             return _logger.BeginScope(scope);
         }

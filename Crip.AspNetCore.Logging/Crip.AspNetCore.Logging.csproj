@@ -10,8 +10,18 @@
         <Version>1.0.0.0</Version>
         <Authors>TAHQ69</Authors>
         <Company>CRIP</Company>
+        <Title>$(AssemblyName)</Title>
+        <Description>AspNetCore HTTP request logging.</Description>
         <PackageDescription>AspNetCore request logging.</PackageDescription>
         <RepositoryUrl>https://github.com/crip-home/Crip.AspNetCore.Logging</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/crip-home/Crip.AspNetCore.Logging</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/crip-home/Crip.AspNetCore.Logging/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>AspNetCore, HTTP, log</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <NoWarn>1701;1702;SA1101;SA1633;SA1200;SA1309</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,7 +38,7 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.261">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
