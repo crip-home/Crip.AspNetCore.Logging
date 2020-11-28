@@ -35,7 +35,7 @@ jobs:
     - name: Build Crip.AspNetCore.Logging
       run: dotnet build Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-restore -p:Version=${{ env.APP_VERSION }}
     - name: Pack NuGet
-      run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-symbols --include-source -p:PackageVersion=${{ env.APP_VERSION }}
+      run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-source -p:PackageVersion=${{ env.APP_VERSION }}
     - name: Publish NuGet
       run: dotnet nuget push "**/bin/Release/*.nupkg"
 # API key to authenticate with NuGet server
