@@ -1,0 +1,108 @@
+﻿{
+  "candidates": [
+    {
+      "metaData": {
+        "inputDate": "2018-08-23T15:25:48.954Z",
+        "lastModificationDate": "2019-03-27T09:15:18.551Z",
+        "schengenId": {
+          "requestingUser": "0021.02",
+          "nationalIdNumber": "0000000152560",
+          "recordType": "0002.01"
+        },
+        "reasonForRequest": "0015.01",
+        "actionToBeTaken": "0012.01",
+        "expiryDate": "2028-08-23T00:00:00",
+        "issuingAuthority": "ADYLIGETI REND�SZETI SZAKK�Z�PISKOLA",
+        "decisionReference": null
+      },
+      "flag": null,
+      "object": {
+        "issuedDocument": null,
+        "vehicle": {
+          "vinNumber": {
+            "standardVinNumber": false,
+            "vinConfirmationStatus": "0001.01",
+            "vinNumbers": {
+              "originalValue": "TESZT160000000001",
+              "precision": "0001.01",
+              "transformedValues": [
+                "TESZT160000000001"
+              ]
+            }
+          },
+          "vehicleRelatedRemarks": [
+            "0001.01",
+            "0006.01"
+          ],
+          "type": {
+            "originalValue": "TDI.1",
+            "precision": "0001.01",
+            "transformedValues": [
+              "TDI.1"
+            ]
+          },
+          "registrationNumbers": [
+            {
+              "originalValue": "TESZT66",
+              "precision": "0001.01",
+              "transformedValues": [
+                "TESZT66"
+              ]
+            }
+          ],
+          "productionYear": 1999,
+          "make": "0061.01",
+          "countryOfRegistration": "0348.01",
+          "colours": [
+            "0010.01"
+          ],
+          "category": "0005.01"
+        },
+        "pictures": [
+          {
+            "binaryId": 122182,
+            "binaryData": "/9j/4AAQSk...",
+            "dataLoadStatus": "OK",
+            "nationalReference": "10000000000000005626",
+            "metaData": {
+              "pictureType": "0001.01",
+              "fileType": "0001.01",
+              "datePictureTaken": null,
+              "mostRelevant": true,
+              "placePictureTaken": null,
+              "qualityForAutomation": null
+            }
+          }
+        ],
+        "licencePlate": null,
+        "person": null,
+        "fingerprints": null,
+        "eaws": null
+      },
+      "links": [
+        {
+          "linkId": 90363,
+          "linkNationalReference": null,
+          "inputDate": null,
+          "lastModificationDate": null,
+          "linkedAlerts": [
+            {
+              "requestingUser": "0021.02",
+              "nationalIdNumber": "0000000003268",
+              "recordType": "0002.01"
+            },
+            {
+              "requestingUser": "0021.02",
+              "nationalIdNumber": "0000000152560",
+              "recordType": "0002.01"
+            }
+          ]
+        }
+      ],
+      "rank": 1.0
+    }
+  ],
+  "hitCount": 1,
+  "status": "NOT OK",
+  "message": "Found 1 candidates"
+}
