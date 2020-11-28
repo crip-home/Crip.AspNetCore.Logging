@@ -36,5 +36,7 @@ jobs:
       run: dotnet build Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-restore -p:Version=${{ env.APP_VERSION }}
     - name: Pack NuGet
       run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-source -p:PackageVersion=${{ env.APP_VERSION }}
-    - name: Publish NuGet
+    - name: Publish GitHub NuGet
       run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg"
+    - name: Publish nuget.org NuGet
+      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
