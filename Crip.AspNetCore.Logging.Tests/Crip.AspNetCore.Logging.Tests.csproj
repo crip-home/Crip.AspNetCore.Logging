@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <IsPackable>false</IsPackable>
         <LangVersion>9</LangVersion>
+        <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
