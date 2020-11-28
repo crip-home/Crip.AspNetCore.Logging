@@ -6,6 +6,12 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+        <PackageId>$(AssemblyName)</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>TAHQ69</Authors>
+        <Company>CRIP</Company>
+        <PackageDescription>AspNetCore request logging.</PackageDescription>
+        <RepositoryUrl>https://github.com/crip-home/Crip.AspNetCore.Logging</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
