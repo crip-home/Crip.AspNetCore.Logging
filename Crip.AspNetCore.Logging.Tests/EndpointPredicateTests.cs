@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -82,6 +83,19 @@ namespace Crip.AspNetCore.Logging.Tests
 
             // Assert
             skip.Should().BeTrue();
+        }
+
+        [Fact, Trait("Category", "Unit")]
+        public void EndpointPredicate_Filter_FailsOnMissingRequestInput()
+        {
+            // Arrange
+            EndpointPredicate predicate = new(false, new[] { "*" });
+
+            // Act
+            Action act = () => predicate.Filter(null!);
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

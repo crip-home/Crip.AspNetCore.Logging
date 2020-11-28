@@ -30,6 +30,7 @@ namespace Crip.AspNetCore.Logging
             Url = request.GetDisplayUrl();
             Headers = request.Headers;
             Content = request.Body;
+            ContentType = request.ContentType;
         }
 
         private RequestDetails(HttpRequestMessage? request)
@@ -51,6 +52,7 @@ namespace Crip.AspNetCore.Logging
                 header => new StringValues(header.Value.ToArray()));
 
             Content = request.Content?.ReadAsStreamAsync().GetAwaiter().GetResult();
+            ContentType = request.Content?.Headers.ContentType.ToString();
         }
 
         public string? Protocol { get; init; }
