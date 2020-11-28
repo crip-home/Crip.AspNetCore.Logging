@@ -42,12 +42,12 @@ namespace Crip.AspNetCore.Logging
             }
 
             StatusCode = response.StatusCode;
-            ContentType = response.Content.Headers.ContentType.ToString();
+            ContentType = response.Content?.Headers.ContentType.ToString();
             Headers = response.Headers.ToDictionary(
                 header => header.Key,
                 header => new StringValues(header.Value.ToArray()));
 
-            Content = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+            Content = response.Content?.ReadAsStreamAsync().GetAwaiter().GetResult();
         }
 
         public IStopwatch? Stopwatch { get; init; }

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Crip.AspNetCore.Logging.Handlers
+namespace Crip.AspNetCore.Logging
 {
     /// <summary>
     /// HTTP client logging handler.
@@ -12,40 +12,41 @@ namespace Crip.AspNetCore.Logging.Handlers
     /// <typeparam name="T">The type of the client.</typeparam>
     public class LoggingHandler<T> : LoggingHandler
     {
-        private readonly ILogger<T> _logger;
-        private readonly IHttpLogger _httpLogger;
+        private readonly IHttpLoggerFactory _httpLoggerFactory;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggingHandler{T}"/> class.
         /// </summary>
-        /// <param name="logger">The actual log writer.</param>
-        /// <param name="httpLogger">The HTTP request/response detail logger.</param>
-        public LoggingHandler(ILogger<T> logger, IHttpLogger httpLogger)
+        /// <param name="loggerFactory">The actual log writer.</param>
+        /// <param name="httpLoggerFactory">The HTTP request/response detail logger.</param>
+        public LoggingHandler(ILoggerFactory loggerFactory, IHttpLoggerFactory httpLoggerFactory)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _httpLogger = httpLogger;
+            _httpLoggerFactory = httpLoggerFactory;
+            _logger = loggerFactory.CreateLogger($"{typeof(LoggingHandler).FullName}.{typeof(T).Name}");
         }
 
         /// <inheritdoc />
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
+            var httpLogger = _httpLoggerFactory.Create(_logger);
             var stopwatch = CreateStopwatch();
             stopwatch.Start();
             HttpResponseMessage? response = null;
             try
             {
-                await _httpLogger.LogRequest(RequestDetails.From(request));
+                await httpLogger.LogRequest(RequestDetails.From(request));
 
                 response = await base.SendAsync(request, ct);
 
-                await _httpLogger.LogResponse(
+                await httpLogger.LogResponse(
                     RequestDetails.From(request),
                     ResponseDetails.From(response, stopwatch));
             }
             catch (Exception exception)
             {
                 stopwatch.Stop();
-                _httpLogger.LogError(
+                httpLogger.LogError(
                     exception,
                     RequestDetails.From(request),
                     ResponseDetails.From(response, stopwatch));
@@ -54,7 +55,7 @@ namespace Crip.AspNetCore.Logging.Handlers
             }
             finally
             {
-                _httpLogger.LogInfo(
+                httpLogger.LogInfo(
                     RequestDetails.From(request),
                     ResponseDetails.From(response, stopwatch)).Wait(ct);
             }
