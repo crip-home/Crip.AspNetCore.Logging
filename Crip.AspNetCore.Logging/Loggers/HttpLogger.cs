@@ -97,13 +97,13 @@ namespace Crip.AspNetCore.Logging
 
         private IDisposable RequestScope(RequestDetails? request)
         {
-            if (request is null)
+            var scope = new RequestScope();
+            if (request is not null)
             {
-                return _logger.BeginScope(new RequestScope());
+                scope = new RequestScope(request.Url, request.Method);
             }
 
-            return _logger.BeginScope(
-                new RequestScope(request.Url, request.Method));
+            return _logger.BeginScope(scope);
         }
 
         private IDisposable ResponseScope(ResponseDetails response)

@@ -1,15 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using Crip.AspNetCore.Tests;
+using Microsoft.Extensions.Configuration;
 using Xunit;
 
 namespace Crip.AspNetCore.Logging.Tests
 {
     public class LongJsonContentMiddlewareTests
     {
+        [Fact, Trait("Category", "Unit")]
+        public void LongJsonContentMiddleware_Constructor_OverridesDefaultsWithValuesFromConfig()
+        {
+            // Arrange
+            JsonStreamModifier jsonBuilder = new();
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    { "Logging:Request:MaxCharCountInField", "999" },
+                    { "Logging:Request:LeaveOnTrimCharCountInField", "888" },
+                })
+                .Build();
+
+            // Act
+            var middleware = new LongJsonContentMiddleware(jsonBuilder, configuration);
+
+            // Assert
+            middleware.MaxCharCountInField.Should().Be(999);
+            middleware.LeaveOnTrim.Should().Be(888);
+        }
+
         [Fact, Trait("Category", "Unit")]
         public void LongJsonContentMiddleware_Modify_ProperlyCreateComplex()
         {
@@ -193,6 +216,7 @@ namespace Crip.AspNetCore.Logging.Tests
             {
                 LeaveOnTrim = 12,
             };
+
             string content = @"{""key1"":""short"",""key2"":""some long content""}";
             byte[] bytes = Encoding.UTF8.GetBytes(content);
             MemoryStream output = new();

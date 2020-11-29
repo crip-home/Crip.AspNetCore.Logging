@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Crip.AspNetCore.Logging
@@ -14,21 +13,21 @@ namespace Crip.AspNetCore.Logging
         /// Adds logging DI.
         /// </summary>
         /// <param name="services">DI service.</param>
-        /// <param name="config">Application configuration.</param>
-        public static void AddRequestLogging(this IServiceCollection services, IConfiguration config)
+        /// <returns>Updated service collection.</returns>
+        public static IServiceCollection AddRequestLogging(this IServiceCollection services)
         {
-            services.AddTransient<IContextLoggerFactory, ContextLoggerFactory>();
-            services.AddTransient<IHttpLoggerFactory, HttpLoggerFactory>();
-            services.AddTransient<IRequestLogger, RequestLogger>();
-            services.AddTransient<IResponseLogger, ResponseLogger>();
-            services.AddTransient<IBasicInfoLogger, BasicInfoLogger>();
-
-            services.AddTransient<LogContentFactory>();
-            services.AddTransient<IRequestContentLogMiddleware, LongJsonContentMiddleware>();
-            services.AddTransient<IJsonStreamModifier, JsonStreamModifier>();
-
-            services.AddTransient<LogHeaderFactory>();
-            services.AddTransient<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>();
+            return services
+                .AddSingleton<IMeasurable, TimeMeasurable>()
+                .AddTransient<IContextLoggerFactory, ContextLoggerFactory>()
+                .AddTransient<IHttpLoggerFactory, HttpLoggerFactory>()
+                .AddTransient<IRequestLogger, RequestLogger>()
+                .AddTransient<IResponseLogger, ResponseLogger>()
+                .AddTransient<IBasicInfoLogger, BasicInfoLogger>()
+                .AddTransient<LogContentFactory>()
+                .AddTransient<IRequestContentLogMiddleware, LongJsonContentMiddleware>()
+                .AddTransient<IJsonStreamModifier, JsonStreamModifier>()
+                .AddTransient<LogHeaderFactory>()
+                .AddTransient<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>();
         }
 
         /// <summary>
@@ -36,27 +35,29 @@ namespace Crip.AspNetCore.Logging
         /// </summary>
         /// <param name="services">DI service.</param>
         /// <param name="ignore">Collection of the endpoints to be ignored.</param>
+        /// <returns>Updated service collection.</returns>
         /// <example>
         /// <code>
-        ///    services.AddLogEndpointIgnorePredicate(new [] { "/api/swagger*", "/api/healthchecks*" })
+        ///    services.AddRequestLoggingExclude(new [] { "/api/swagger*", "/api/healthchecks*" })
         /// </code>
         /// Will exclude all request logs to /api/swagger* and /api/healthchecks*.
         /// </example>
-        public static void AddRequestLoggingIgnorePredicate(
+        public static IServiceCollection AddRequestLoggingExclude(
             this IServiceCollection services,
             IEnumerable<string> ignore)
         {
-            services.AddSingleton<IHttpRequestPredicate>(provider =>
-                new EndpointPredicate(false, ignore));
+            return services.AddSingleton<IHttpRequestPredicate>(provider =>
+                new EndpointPredicate(true, ignore));
         }
 
         /// <summary>
         /// Adds custom HTTP request logging middleware.
         /// </summary>
         /// <param name="app">The application builder.</param>
-        public static void UseRequestLoggingMiddleware(this IApplicationBuilder app)
+        /// <returns>Updated application builder.</returns>
+        public static IApplicationBuilder UseRequestLoggingMiddleware(this IApplicationBuilder app)
         {
-            app.UseMiddleware<RequestLoggingMiddleware>();
+            return app.UseMiddleware<RequestLoggingMiddleware>();
         }
     }
 }

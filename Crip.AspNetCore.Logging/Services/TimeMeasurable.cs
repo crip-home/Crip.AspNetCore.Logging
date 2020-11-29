@@ -8,8 +8,8 @@ namespace Crip.AspNetCore.Logging
     /// </summary>
     public class TimeMeasurable : IMeasurable
     {
-        private readonly IServiceProvider? _services;
-        private IStopwatch? _stopwatch = null;
+        private readonly IServiceProvider _services;
+        private readonly IStopwatch? _stopwatch;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimeMeasurable"/> class.
@@ -20,13 +20,18 @@ namespace Crip.AspNetCore.Logging
             _services = services;
         }
 
+        private TimeMeasurable(IServiceProvider services, IStopwatch stopwatch)
+        {
+            _services = services;
+            _stopwatch = stopwatch;
+            _stopwatch.Start();
+        }
+
         /// <inheritdoc />
         public IMeasurable StartMeasure()
         {
-            _stopwatch = _services.GetService<IStopwatch>();
-            _stopwatch.Start();
-
-            return this;
+            var stopwatch = _services.GetService<IStopwatch>();
+            return new TimeMeasurable(_services, stopwatch);
         }
 
         /// <inheritdoc />

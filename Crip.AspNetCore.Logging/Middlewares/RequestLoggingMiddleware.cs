@@ -27,8 +27,8 @@ namespace Crip.AspNetCore.Logging
             IMeasurable measurable)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _contextLoggerFactory = contextLoggerFactory;
-            _measurable = measurable;
+            _contextLoggerFactory = contextLoggerFactory ?? throw new ArgumentNullException(nameof(contextLoggerFactory));
+            _measurable = measurable ?? throw new ArgumentNullException(nameof(measurable));
         }
 
         /// <summary>
