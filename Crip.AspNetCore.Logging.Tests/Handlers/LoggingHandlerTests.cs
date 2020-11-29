@@ -25,6 +25,7 @@ namespace Crip.AspNetCore.Logging.Tests.Handlers
 {
     public class LoggingHandlerTests
     {
+
         [Fact, Trait("Category", "Integration")]
         public async Task LoggingHandler_SendAsync_WritesInformationLogMessage()
         {
@@ -122,12 +123,8 @@ Location: http://example.com/
         private HttpMessageInvoker CreateInvoker(HttpResponseMessage response, LogEventLevel logLevel = LogEventLevel.Fatal)
         {
             var serviceProvider = CreateProvider(logLevel);
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-            var httpLoggerFactory = serviceProvider.GetService<IHttpLoggerFactory>();
-            var handler = new LoggingHandlerUnderTests(loggerFactory, httpLoggerFactory)
-            {
-                InnerHandler = new TestHttpHandler(response)
-            };
+            var handler = serviceProvider.GetService<LoggingHandler<Foo>>();
+            handler.InnerHandler = new TestHttpHandler(response);
 
             return new HttpMessageInvoker(handler);
         }
@@ -140,6 +137,9 @@ Location: http://example.com/
                 .AddSingleton<IResponseLogger>(i => new ResponseLogger(new(null), new(null)))
                 .AddSingleton<IBasicInfoLogger, BasicInfoLogger>()
                 .AddSingleton<IHttpLoggerFactory, HttpLoggerFactory>()
+                .AddSingleton<IMeasurable, TimeMeasurable>()
+                .AddSingleton<IStopwatch>(i => new MockStopwatch(TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.1)))
+                .AddSingleton(typeof(LoggingHandler<>))
                 .BuildServiceProvider();
         }
 
@@ -173,6 +173,10 @@ Location: http://example.com/
             formatter.Format(evt, sw);
 
             return sw.ToString();
+        }
+
+        private class Foo
+        {
         }
     }
 }

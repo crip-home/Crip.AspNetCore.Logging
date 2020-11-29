@@ -13,16 +13,19 @@ namespace Crip.AspNetCore.Logging
     public class LoggingHandler<T> : LoggingHandler
     {
         private readonly IHttpLoggerFactory _httpLoggerFactory;
+        private readonly IMeasurable _measure;
         private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggingHandler{T}"/> class.
         /// </summary>
         /// <param name="loggerFactory">The actual log writer.</param>
+        /// <param name="measure">The time measure service.</param>
         /// <param name="httpLoggerFactory">The HTTP request/response detail logger.</param>
-        public LoggingHandler(ILoggerFactory loggerFactory, IHttpLoggerFactory httpLoggerFactory)
+        public LoggingHandler(ILoggerFactory loggerFactory, IHttpLoggerFactory httpLoggerFactory, IMeasurable measure)
         {
             _httpLoggerFactory = httpLoggerFactory;
+            _measure = measure;
             _logger = loggerFactory.CreateLogger($"{typeof(LoggingHandler).FullName}.{typeof(T).Name}");
         }
 
@@ -30,14 +33,14 @@ namespace Crip.AspNetCore.Logging
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
             var httpLogger = _httpLoggerFactory.Create(_logger);
-            var stopwatch = CreateStopwatch();
-            stopwatch.Start();
+            var measure = _measure.StartMeasure();
             HttpResponseMessage? response = null;
             try
             {
                 await httpLogger.LogRequest(RequestDetails.From(request));
 
                 response = await base.SendAsync(request, ct);
+                var stopwatch = measure.StopMeasure();
 
                 await httpLogger.LogResponse(
                     RequestDetails.From(request),
@@ -45,7 +48,7 @@ namespace Crip.AspNetCore.Logging
             }
             catch (Exception exception)
             {
-                stopwatch.Stop();
+                var stopwatch = measure.StopMeasure();
                 httpLogger.LogError(
                     exception,
                     RequestDetails.From(request),
@@ -55,21 +58,13 @@ namespace Crip.AspNetCore.Logging
             }
             finally
             {
+                var stopwatch = measure.StopMeasure();
                 httpLogger.LogInfo(
                     RequestDetails.From(request),
                     ResponseDetails.From(response, stopwatch)).Wait(ct);
             }
 
             return response;
-        }
-
-        /// <summary>
-        /// Factory method to create Stopwatch wrapper instance.
-        /// </summary>
-        /// <returns>New SystemStopwatch instance.</returns>
-        protected virtual IStopwatch CreateStopwatch()
-        {
-            return new LoggingStopwatch();
         }
     }
 
