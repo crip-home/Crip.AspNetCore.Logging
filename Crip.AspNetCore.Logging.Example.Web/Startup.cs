@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,11 @@ namespace Crip.AspNetCore.Logging.Example.Web
                 .AddRequestLoggingCookieValueMiddleware()
                 // Do not log if request path matches provided pattern.
                 .AddRequestLoggingExclude("/api/test/silent-start*", "/api/test/silent");
+
+            services.AddLoggableHttpClient<NamedHttpClient>(client =>
+            {
+                client.BaseAddress = new Uri("http://postman-echo.com/");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

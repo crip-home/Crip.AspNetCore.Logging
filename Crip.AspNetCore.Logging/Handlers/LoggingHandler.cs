@@ -35,24 +35,27 @@ namespace Crip.AspNetCore.Logging
             var httpLogger = _httpLoggerFactory.Create(_logger);
             var measure = _measure.StartMeasure();
             HttpResponseMessage? response = null;
+            RequestDetails requestDetails = RequestDetails.From(request);
+            ResponseDetails? responseDetails = null;
             try
             {
-                await httpLogger.LogRequest(RequestDetails.From(request));
+                await httpLogger.LogRequest(requestDetails);
 
                 response = await base.SendAsync(request, ct);
                 var stopwatch = measure.StopMeasure();
 
-                await httpLogger.LogResponse(
-                    RequestDetails.From(request),
-                    ResponseDetails.From(response, stopwatch));
+                responseDetails = ResponseDetails.From(response, stopwatch);
+                await httpLogger.LogResponse(requestDetails, responseDetails);
+
+                return response;
             }
             catch (Exception exception)
             {
                 var stopwatch = measure.StopMeasure();
                 httpLogger.LogError(
                     exception,
-                    RequestDetails.From(request),
-                    ResponseDetails.From(response, stopwatch));
+                    requestDetails,
+                    responseDetails ?? ResponseDetails.From(response, stopwatch));
 
                 throw;
             }
@@ -60,11 +63,9 @@ namespace Crip.AspNetCore.Logging
             {
                 var stopwatch = measure.StopMeasure();
                 httpLogger.LogInfo(
-                    RequestDetails.From(request),
-                    ResponseDetails.From(response, stopwatch)).Wait(ct);
+                    requestDetails,
+                    responseDetails ?? ResponseDetails.From(response, stopwatch)).Wait(ct);
             }
-
-            return response;
         }
     }
 

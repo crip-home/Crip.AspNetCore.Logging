@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
@@ -43,11 +44,29 @@ namespace Crip.AspNetCore.Logging
 
             StatusCode = (HttpStatusCode)(statusCode ?? (int)response.StatusCode);
             ContentType = response.Content?.Headers.ContentType.ToString();
-            Headers = response.Headers.ToDictionary(
+            Headers = ToDictionary(response.Headers);
+            Content = Read(response.Content);
+        }
+
+        private static Stream? Read(HttpContent? content)
+        {
+            if (content is null)
+            {
+                return null;
+            }
+
+            // Do not use steam read as it does not uses buffering.
+            var readTask = content.ReadAsByteArrayAsync();
+            var bytes = readTask.GetAwaiter().GetResult();
+
+            return new MemoryStream(bytes);
+        }
+
+        private static Dictionary<string, StringValues> ToDictionary(HttpResponseHeaders response)
+        {
+            return response.ToDictionary(
                 header => header.Key,
                 header => new StringValues(header.Value.ToArray()));
-
-            Content = response.Content?.ReadAsStreamAsync().GetAwaiter().GetResult();
         }
 
         public IStopwatch? Stopwatch { get; init; }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Crip.AspNetCore.Logging
 {
@@ -29,6 +31,55 @@ namespace Crip.AspNetCore.Logging
                 .AddTransient<IJsonStreamModifier, JsonStreamModifier>()
                 .AddTransient<LogHeaderFactory>()
                 .AddTransient<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>();
+        }
+
+        public static IServiceCollection AddRequestLoggingHandler(this IServiceCollection services)
+        {
+            services.TryAddTransient(typeof(LoggingHandler<>));
+
+            return services;
+        }
+
+        public static IHttpClientBuilder AddLoggableHttpClient<TClient>(this IServiceCollection services)
+            where TClient : class
+        {
+            return services
+                .AddRequestLoggingHandler()
+                .AddHttpClient<TClient>()
+                .AddHttpMessageHandler<LoggingHandler<TClient>>();
+        }
+
+        public static IHttpClientBuilder AddLoggableHttpClient<TClient, TImplementation>(this IServiceCollection services)
+            where TClient : class
+            where TImplementation : class, TClient
+        {
+            return services
+                .AddRequestLoggingHandler()
+                .AddHttpClient<TClient, TImplementation>()
+                .AddHttpMessageHandler<LoggingHandler<TImplementation>>();
+        }
+
+        public static IHttpClientBuilder AddLoggableHttpClient<TClient>(
+            this IServiceCollection services,
+            Action<HttpClient> configureClient)
+            where TClient : class
+        {
+            return services
+                .AddRequestLoggingHandler()
+                .AddHttpClient<TClient>(configureClient)
+                .AddHttpMessageHandler<LoggingHandler<TClient>>();
+        }
+
+        public static IHttpClientBuilder AddLoggableHttpClient<TClient, TImplementation>(
+            this IServiceCollection services,
+            Action<HttpClient> configureClient)
+            where TClient : class
+            where TImplementation : class, TClient
+        {
+            return services
+                .AddRequestLoggingHandler()
+                .AddHttpClient<TClient, TImplementation>(configureClient)
+                .AddHttpMessageHandler<LoggingHandler<TImplementation>>();
         }
 
         /// <summary>

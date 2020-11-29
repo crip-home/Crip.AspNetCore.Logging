@@ -12,6 +12,8 @@ namespace Crip.AspNetCore.Logging.Example.Web
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
+                .MinimumLevel.Override("Crip.AspNetCore.Logging.LoggingHandler.NamedHttpClient", LogEventLevel.Verbose)
                 /* Set all request logs to Information level. To DISABLE - set Warning level */
                 .MinimumLevel.Override("Crip.AspNetCore.Logging.RequestLoggingMiddleware", LogEventLevel.Information)
                 /* Set 'Test' controller logs to Verbose level (will write request metrics, request/response headers and entire body to log message) */
