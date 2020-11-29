@@ -11,7 +11,6 @@ using Crip.AspNetCore.Tests;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -19,7 +18,6 @@ using Serilog.Extensions.Logging;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.TestCorrelator;
 using Xunit;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Crip.AspNetCore.Logging.Tests.Handlers
 {
