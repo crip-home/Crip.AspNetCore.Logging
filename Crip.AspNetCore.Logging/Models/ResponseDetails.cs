@@ -19,7 +19,7 @@ namespace Crip.AspNetCore.Logging
             Time = stopwatch?.Time() ?? string.Empty;
         }
 
-        private ResponseDetails(HttpResponse? response, IStopwatch? stopwatch)
+        private ResponseDetails(HttpResponse? response, IStopwatch? stopwatch, int? statusCode)
             : this(stopwatch)
         {
             if (response is null)
@@ -27,13 +27,13 @@ namespace Crip.AspNetCore.Logging
                 return;
             }
 
-            StatusCode = (HttpStatusCode)response.StatusCode;
+            StatusCode = (HttpStatusCode)(statusCode ?? response.StatusCode);
             ContentType = response.ContentType;
             Headers = response.Headers;
             Content = response.Body;
         }
 
-        private ResponseDetails(HttpResponseMessage? response, IStopwatch? stopwatch)
+        private ResponseDetails(HttpResponseMessage? response, IStopwatch? stopwatch, int? statusCode)
             : this(stopwatch)
         {
             if (response is null)
@@ -41,7 +41,7 @@ namespace Crip.AspNetCore.Logging
                 return;
             }
 
-            StatusCode = response.StatusCode;
+            StatusCode = (HttpStatusCode)(statusCode ?? (int)response.StatusCode);
             ContentType = response.Content?.Headers.ContentType.ToString();
             Headers = response.Headers.ToDictionary(
                 header => header.Key,
@@ -62,10 +62,10 @@ namespace Crip.AspNetCore.Logging
 
         public Stream? Content { get; init; }
 
-        public static ResponseDetails From(HttpResponseMessage? response, IStopwatch? stopwatch) =>
-            response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch);
+        public static ResponseDetails From(HttpResponseMessage? response, IStopwatch? stopwatch, int? statusCode = null) =>
+            response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch, statusCode);
 
-        public static ResponseDetails From(HttpResponse? response, IStopwatch? stopwatch) =>
-            response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch);
+        public static ResponseDetails From(HttpResponse? response, IStopwatch? stopwatch, int? statusCode = null) =>
+            response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch, statusCode);
     }
 }

@@ -24,6 +24,7 @@ namespace Crip.AspNetCore.Logging.Tests
 
             // Act and Assert
             provider.GetService<IMeasurable>().Should().NotBeNull();
+            provider.GetService<IStopwatch>().Should().NotBeNull();
             provider.GetService<IContextLoggerFactory>().Should().NotBeNull();
             provider.GetService<IHttpLoggerFactory>().Should().NotBeNull();
             provider.GetService<IRequestLogger>().Should().NotBeNull();
