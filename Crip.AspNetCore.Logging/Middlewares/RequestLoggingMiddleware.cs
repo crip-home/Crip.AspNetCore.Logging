@@ -53,27 +53,23 @@ namespace Crip.AspNetCore.Logging
         {
             var logger = _contextLoggerFactory.Create<RequestLoggingMiddleware>(context);
             var measure = _measurable.StartMeasure();
+            Stream originalBody = context.Response.Body;
+            Stream responseBody = new MemoryStream();
 
             try
             {
                 context.Request.EnableBuffering();
                 await logger.LogRequest();
 
-                Stream originalBodyStream = context.Response.Body;
-                await using MemoryStream temp = new();
                 if (logger.LogLevel <= LogLevel.Trace)
                 {
-                    context.Response.Body = temp;
+                    context.Response.Body = responseBody;
                 }
 
                 await _next(context);
                 var stopwatch = measure.StopMeasure();
 
                 await logger.LogResponse(stopwatch);
-                if (logger.LogLevel <= LogLevel.Trace)
-                {
-                    await temp.CopyToAsync(originalBodyStream);
-                }
             }
             catch (Exception exception)
             {
@@ -86,6 +82,11 @@ namespace Crip.AspNetCore.Logging
             {
                 var stopwatch = measure.StopMeasure();
                 logger.LogInfo(stopwatch).Wait();
+                if (logger.LogLevel <= LogLevel.Trace)
+                {
+                    await responseBody.CopyToAsync(originalBody);
+                    context.Response.Body = originalBody;
+                }
             }
         }
     }

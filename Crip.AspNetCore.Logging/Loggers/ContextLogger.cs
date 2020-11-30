@@ -14,6 +14,7 @@ namespace Crip.AspNetCore.Logging
         private readonly HttpContext _context;
         private readonly IHttpLogger _httpLogger;
         private readonly ILogger _logger;
+        private int? _statusCode;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextLogger{T}"/> class.
@@ -53,15 +54,16 @@ namespace Crip.AspNetCore.Logging
         public Task LogInfo(IStopwatch stopwatch)
         {
             var request = RequestDetails.From(_context.Request);
-            var response = ResponseDetails.From(_context.Response, stopwatch);
+            var response = ResponseDetails.From(_context.Response, stopwatch, _statusCode);
             return _httpLogger.LogInfo(request, response);
         }
 
         /// <inheritdoc cref="IContextLogger" />
         public void LogError(Exception exception, IStopwatch? stopwatch)
         {
+            _statusCode = 500;
             var request = RequestDetails.From(_context.Request);
-            var response = ResponseDetails.From(_context.Response, stopwatch);
+            var response = ResponseDetails.From(_context.Response, stopwatch, _statusCode);
             _httpLogger.LogError(exception, request, response);
         }
     }

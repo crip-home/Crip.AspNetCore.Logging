@@ -44,11 +44,11 @@ namespace Crip.AspNetCore.Logging
                 return string.Empty;
             }
 
-            content.Seek(0, SeekOrigin.Begin);
+            SeekBegin(content);
 
             string body = await _contentFactory.PrepareBody(contentType, content);
 
-            content.Seek(0, SeekOrigin.Begin);
+            SeekBegin(content);
 
             return body;
         }
@@ -72,6 +72,14 @@ namespace Crip.AspNetCore.Logging
                 string value = _headerFactory.PrepareHeader(header);
 
                 output.AppendLine($"{key}: {value}");
+            }
+        }
+
+        private static void SeekBegin(Stream content)
+        {
+            if (content.CanSeek)
+            {
+                content.Seek(0, SeekOrigin.Begin);
             }
         }
     }
