@@ -22,4 +22,4 @@ jobs:
       - name: Build solution
         run: dotnet build --no-restore -c Debug -v m
       - name: Test Crip.AspNetCore.Logging.Tests
-        run: dotnet test --no-restore --no-build -v n
+        run: dotnet test
