@@ -1,16 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <LangVersion>9</LangVersion>
+        <IsPackable>false</IsPackable>
+        <Nullable>enable</Nullable>
+        <Deterministic>false</Deterministic>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
-      <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="3.4.0"/>
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj" />
+        <ProjectReference Include="..\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj"/>
     </ItemGroup>
 
 </Project>
