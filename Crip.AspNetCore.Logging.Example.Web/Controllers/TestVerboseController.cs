@@ -5,11 +5,22 @@ namespace Crip.AspNetCore.Logging.Example.Web.Controllers
 {
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class TestVerboseController : ControllerBase
     {
         [HttpGet]
         public IActionResult Index()
+        {
+            return Ok(new
+            {
+                request = true,
+                headers = true,
+                body = true,
+            });
+        }
+        
+        [HttpPost]
+        public IActionResult Post()
         {
             return Ok(new
             {
