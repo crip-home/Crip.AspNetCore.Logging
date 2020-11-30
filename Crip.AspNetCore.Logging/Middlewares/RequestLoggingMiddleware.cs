@@ -13,18 +13,22 @@ namespace Crip.AspNetCore.Logging
     {
         private readonly RequestDelegate _next;
         private readonly IContextLoggerFactory _contextLoggerFactory;
+        private readonly IMeasurable _measurable;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestLoggingMiddleware"/> class.
         /// </summary>
         /// <param name="next">The next request delegate.</param>
         /// <param name="contextLoggerFactory">HTTP context logger factory service.</param>
+        /// <param name="measurable">The time measure service.</param>
         public RequestLoggingMiddleware(
             RequestDelegate next,
-            IContextLoggerFactory contextLoggerFactory)
+            IContextLoggerFactory contextLoggerFactory,
+            IMeasurable measurable)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _contextLoggerFactory = contextLoggerFactory;
+            _contextLoggerFactory = contextLoggerFactory ?? throw new ArgumentNullException(nameof(contextLoggerFactory));
+            _measurable = measurable ?? throw new ArgumentNullException(nameof(measurable));
         }
 
         /// <summary>
@@ -48,53 +52,42 @@ namespace Crip.AspNetCore.Logging
         public async Task Invoke(HttpContext context)
         {
             var logger = _contextLoggerFactory.Create<RequestLoggingMiddleware>(context);
-            var stopwatch = CreateStopwatch();
-            stopwatch.Start();
+            var measure = _measurable.StartMeasure();
+            Stream originalBody = context.Response.Body;
+            Stream responseBody = new MemoryStream();
 
             try
             {
                 context.Request.EnableBuffering();
                 await logger.LogRequest();
 
-                Stream originalBodyStream = context.Response.Body;
-                await using MemoryStream temp = new();
                 if (logger.LogLevel <= LogLevel.Trace)
                 {
-                    context.Response.Body = temp;
+                    context.Response.Body = responseBody;
                 }
 
-                // -------------------------------------------------------------
                 await _next(context);
-                // -------------------------------------------------------------
-
-                stopwatch.Stop();
+                var stopwatch = measure.StopMeasure();
 
                 await logger.LogResponse(stopwatch);
-                if (logger.LogLevel <= LogLevel.Trace)
-                {
-                    await temp.CopyToAsync(originalBodyStream);
-                }
             }
             catch (Exception exception)
             {
-                stopwatch.Stop();
+                var stopwatch = measure.StopMeasure();
                 logger.LogError(exception, stopwatch);
 
                 throw;
             }
             finally
             {
+                var stopwatch = measure.StopMeasure();
                 logger.LogInfo(stopwatch).Wait();
+                if (logger.LogLevel <= LogLevel.Trace)
+                {
+                    await responseBody.CopyToAsync(originalBody);
+                    context.Response.Body = originalBody;
+                }
             }
-        }
-
-        /// <summary>
-        /// Factory method to create Stopwatch wrapper instance.
-        /// </summary>
-        /// <returns>New SystemStopwatch instance.</returns>
-        protected virtual IStopwatch CreateStopwatch()
-        {
-            return new LoggingStopwatch();
         }
     }
 }

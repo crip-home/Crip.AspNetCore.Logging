@@ -33,7 +33,7 @@ namespace Crip.AspNetCore.Logging
         /// <exception cref="System.ArgumentNullException">
         /// If <paramref name="content"/> not provided.
         /// </exception>
-        public async Task<string> PrepareBody(string contentType, Stream content)
+        public async Task<string> PrepareBody(string? contentType, Stream content)
         {
             var ms = new MemoryStream();
             await content.CopyToAsync(ms);

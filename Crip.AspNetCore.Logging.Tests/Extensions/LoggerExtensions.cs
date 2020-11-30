@@ -26,17 +26,5 @@ namespace Crip.AspNetCore.Logging.Tests
 
             return loggerMock;
         }
-
-        public static Mock<ILogger<T>> VerifyLogging<T>(
-            this Mock<ILogger<T>> loggerMock,
-            string expectedMessage,
-            LogLevel expectedLogLevel = LogLevel.Debug,
-            Times? times = null)
-        {
-            (loggerMock as Mock<ILogger> ?? throw new Exception("Shit happens"))
-                .VerifyLogging(expectedMessage, expectedLogLevel, times);
-
-            return loggerMock;
-        }
     }
 }

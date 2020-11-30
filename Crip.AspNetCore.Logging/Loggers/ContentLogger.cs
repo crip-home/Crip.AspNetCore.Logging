@@ -37,13 +37,18 @@ namespace Crip.AspNetCore.Logging
         /// <param name="contentType">Content type identifier.</param>
         /// <param name="content">Content stream.</param>
         /// <returns>Formatted content as text.</returns>
-        protected async Task<string> ReadContent(string contentType, Stream content)
+        protected async Task<string> ReadContent(string? contentType, Stream? content)
         {
-            content.Seek(0, SeekOrigin.Begin);
+            if (content is null)
+            {
+                return string.Empty;
+            }
+
+            SeekBegin(content);
 
             string body = await _contentFactory.PrepareBody(contentType, content);
 
-            content.Seek(0, SeekOrigin.Begin);
+            SeekBegin(content);
 
             return body;
         }
@@ -54,14 +59,27 @@ namespace Crip.AspNetCore.Logging
         /// </summary>
         /// <param name="output">The target to write header keys and formatted values.</param>
         /// <param name="headers">The headers collection to write.</param>
-        protected void AppendHeaders(StringBuilder output, IEnumerable<KeyValuePair<string, StringValues>> headers)
+        protected void AppendHeaders(StringBuilder output, IEnumerable<KeyValuePair<string, StringValues>>? headers)
         {
+            if (headers is null)
+            {
+                return;
+            }
+
             foreach (var header in headers)
             {
                 string key = header.Key;
                 string value = _headerFactory.PrepareHeader(header);
 
                 output.AppendLine($"{key}: {value}");
+            }
+        }
+
+        private static void SeekBegin(Stream content)
+        {
+            if (content.CanSeek)
+            {
+                content.Seek(0, SeekOrigin.Begin);
             }
         }
     }

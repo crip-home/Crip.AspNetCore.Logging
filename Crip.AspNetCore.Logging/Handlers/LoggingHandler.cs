@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Crip.AspNetCore.Logging.Handlers
+namespace Crip.AspNetCore.Logging
 {
     /// <summary>
     /// HTTP client logging handler.
@@ -12,63 +12,60 @@ namespace Crip.AspNetCore.Logging.Handlers
     /// <typeparam name="T">The type of the client.</typeparam>
     public class LoggingHandler<T> : LoggingHandler
     {
-        private readonly ILogger<T> _logger;
-        private readonly IHttpLogger _httpLogger;
+        private readonly IHttpLoggerFactory _httpLoggerFactory;
+        private readonly IMeasurable _measure;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggingHandler{T}"/> class.
         /// </summary>
-        public LoggingHandler(
-            ILogger<T> logger,
-            IHttpLogger httpLogger)
+        /// <param name="loggerFactory">The actual log writer.</param>
+        /// <param name="measure">The time measure service.</param>
+        /// <param name="httpLoggerFactory">The HTTP request/response detail logger.</param>
+        public LoggingHandler(ILoggerFactory loggerFactory, IHttpLoggerFactory httpLoggerFactory, IMeasurable measure)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _httpLogger = httpLogger;
+            _httpLoggerFactory = httpLoggerFactory;
+            _measure = measure;
+            _logger = loggerFactory.CreateLogger($"{typeof(LoggingHandler).FullName}.{typeof(T).Name}");
         }
 
+        /// <inheritdoc />
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
-            var stopwatch = CreateStopwatch();
-            stopwatch.Start();
+            var httpLogger = _httpLoggerFactory.Create(_logger);
+            var measure = _measure.StartMeasure();
             HttpResponseMessage? response = null;
+            RequestDetails requestDetails = RequestDetails.From(request);
+            ResponseDetails? responseDetails = null;
             try
             {
-                await _httpLogger.LogRequest(RequestDetails.From(request));
+                await httpLogger.LogRequest(requestDetails);
 
                 response = await base.SendAsync(request, ct);
+                var stopwatch = measure.StopMeasure();
 
-                await _httpLogger.LogResponse(
-                    RequestDetails.From(request),
-                    ResponseDetails.From(response, stopwatch));
+                responseDetails = ResponseDetails.From(response, stopwatch);
+                await httpLogger.LogResponse(requestDetails, responseDetails);
+
+                return response;
             }
             catch (Exception exception)
             {
-                stopwatch.Stop();
-                _httpLogger.LogError(
+                var stopwatch = measure.StopMeasure();
+                httpLogger.LogError(
                     exception,
-                    RequestDetails.From(request),
-                    ResponseDetails.From(response, stopwatch));
+                    requestDetails,
+                    responseDetails ?? ResponseDetails.From(response, stopwatch));
 
                 throw;
             }
             finally
             {
-                _httpLogger.LogInfo(
-                    RequestDetails.From(request),
-                    ResponseDetails.From(response, stopwatch)).Wait(ct);
+                var stopwatch = measure.StopMeasure();
+                httpLogger.LogInfo(
+                    requestDetails,
+                    responseDetails ?? ResponseDetails.From(response, stopwatch)).Wait(ct);
             }
-
-            return response;
-        }
-
-
-        /// <summary>
-        /// Factory method to create Stopwatch wrapper instance.
-        /// </summary>
-        /// <returns>New SystemStopwatch instance.</returns>
-        protected virtual IStopwatch CreateStopwatch()
-        {
-            return new LoggingStopwatch();
         }
     }
 
