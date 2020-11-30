@@ -1,0 +1,28 @@
+name: build and test
+
+on:
+  push:
+    branches: [ development, features/* ]
+  pull_request:
+    branches: [ master, development ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.404
+          source-url: https://nuget.pkg.github.com/crip-home/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: dotnet restore -v m
+      - name: Build solution
+        run: dotnet build --no-restore -c Debug -v m
+      - name: Test Crip.AspNetCore.Logging.Tests
+        run: dotnet test --no-restore --no-build -v n

@@ -1,9 +1,7 @@
-name: .NET Core
+name: build, test and publish nuget
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 env:
