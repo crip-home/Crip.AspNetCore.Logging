@@ -43,7 +43,7 @@ namespace Crip.AspNetCore.Logging
             }
 
             StatusCode = (HttpStatusCode)(statusCode ?? (int)response.StatusCode);
-            ContentType = response.Content?.Headers.ContentType.ToString();
+            ContentType = response.Content?.Headers.ContentType?.ToString();
             Headers = ToDictionary(response.Headers);
             Content = Read(response.Content);
         }
