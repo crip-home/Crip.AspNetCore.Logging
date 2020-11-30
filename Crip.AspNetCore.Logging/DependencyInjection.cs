@@ -33,55 +33,6 @@ namespace Crip.AspNetCore.Logging
                 .AddTransient<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>();
         }
 
-        public static IServiceCollection AddRequestLoggingHandler(this IServiceCollection services)
-        {
-            services.TryAddTransient(typeof(LoggingHandler<>));
-
-            return services;
-        }
-
-        public static IHttpClientBuilder AddLoggableHttpClient<TClient>(this IServiceCollection services)
-            where TClient : class
-        {
-            return services
-                .AddRequestLoggingHandler()
-                .AddHttpClient<TClient>()
-                .AddHttpMessageHandler<LoggingHandler<TClient>>();
-        }
-
-        public static IHttpClientBuilder AddLoggableHttpClient<TClient, TImplementation>(this IServiceCollection services)
-            where TClient : class
-            where TImplementation : class, TClient
-        {
-            return services
-                .AddRequestLoggingHandler()
-                .AddHttpClient<TClient, TImplementation>()
-                .AddHttpMessageHandler<LoggingHandler<TImplementation>>();
-        }
-
-        public static IHttpClientBuilder AddLoggableHttpClient<TClient>(
-            this IServiceCollection services,
-            Action<HttpClient> configureClient)
-            where TClient : class
-        {
-            return services
-                .AddRequestLoggingHandler()
-                .AddHttpClient<TClient>(configureClient)
-                .AddHttpMessageHandler<LoggingHandler<TClient>>();
-        }
-
-        public static IHttpClientBuilder AddLoggableHttpClient<TClient, TImplementation>(
-            this IServiceCollection services,
-            Action<HttpClient> configureClient)
-            where TClient : class
-            where TImplementation : class, TClient
-        {
-            return services
-                .AddRequestLoggingHandler()
-                .AddHttpClient<TClient, TImplementation>(configureClient)
-                .AddHttpMessageHandler<LoggingHandler<TImplementation>>();
-        }
-
         /// <summary>
         /// Adds endpoint patterns to ignore them from logging handler.
         /// </summary>
@@ -148,6 +99,18 @@ namespace Crip.AspNetCore.Logging
             }
 
             return app.UseMiddleware<RequestLoggingMiddleware>();
+        }
+
+        /// <summary>
+        /// Add request logging handler to the <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>Updated service collection.</returns>
+        public static IServiceCollection AddRequestLoggingHandler(this IServiceCollection services)
+        {
+            services.TryAddTransient(typeof(LoggingHandler<>));
+
+            return services;
         }
 
         private static bool IsRegistered<T>(this IApplicationBuilder app)
