@@ -1,16 +1,20 @@
-name: build and test
+name: Build and test
 
 on:
   push:
-    branches: [ development, features/* ]
-  pull_request:
-    branches: [ master, development ]
+    branches: [ features/* ]
 
 jobs:
-  build:
-
+  init:
     runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Workflow Action
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ github.token }}
 
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Setup .NET Core 3.1
