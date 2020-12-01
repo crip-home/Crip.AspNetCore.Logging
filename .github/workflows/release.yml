@@ -31,7 +31,7 @@ jobs:
       run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}" >> $GITHUB_ENV
 
     - name: Set release candidate version
-      if: endsWith(github.base_ref, '/master')
+      if: github.base_ref == 'master'
       run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-rc.${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Set beta version
@@ -39,7 +39,7 @@ jobs:
       run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-beta.${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Set alpha version
-      if: endsWith(github.base_ref, '/development')
+      if: github.base_ref == 'development'
       run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Application version
