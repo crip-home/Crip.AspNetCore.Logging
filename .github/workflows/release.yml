@@ -2,14 +2,10 @@ name: Publish Nuget Package
 
 on:
   push:
-    branches:
-      - master
-      - development
+    branches: [ master, development ]
 
   pull_request:
-    branches:
-      - master
-      - development
+    branches: [ master, development ]
 
 env:
   APP_VERSION_BASE: 1.0.2
@@ -18,71 +14,71 @@ jobs:
   init:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Workflow Action
-        uses: styfle/cancel-workflow-action@0.6.0
-        with:
-          access_token: ${{ github.token }}
+    - name: Cancel Workflow Action
+      uses: styfle/cancel-workflow-action@0.6.0
+      with:
+        access_token: ${{ github.token }}
 
   build:
     runs-on: ubuntu-latest
     needs: init
     steps:
-      - name: Set release version
-        if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
-        run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}" >> $GITHUB_ENV
+    - name: Set release version
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+      run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}" >> $GITHUB_ENV
 
-      - name: Set release candidate version
-        if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'pull_request' }}
-        run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-rc.${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Set release candidate version
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'pull_request' }}
+      run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-rc.${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: Set beta version
-        if:${{ github.ref == 'refs/heads/development' && github.event_name == 'push' }}
-        run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-beta.${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Set beta version
+      if: ${{ github.ref == 'refs/heads/development' && github.event_name == 'push' }}
+      run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-beta.${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: Set alpha version
-        if: ${{ github.ref == 'refs/heads/development' && github.event_name == 'pull_request' }}
-        run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Set alpha version
+      if: ${{ github.ref == 'refs/heads/development' && github.event_name == 'pull_request' }}
+      run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: Application version
-        run: echo "${{ env.APP_VERSION }}"
+    - name: Application version
+      run: echo "${{ env.APP_VERSION }}"
 
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Setup .NET Core 3.1
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.404
+    - name: Setup .NET Core 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.404
 
-      - name: Setup .NET Core 5.0
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.100
-          source-url: https://nuget.pkg.github.com/crip-home/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup .NET Core 5.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.100
+        source-url: https://nuget.pkg.github.com/crip-home/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup side by side .NET SDKs on *nix
-        if: matrix.os != 'windows-latest'
-        run: |
-          rsync -a ${DOTNET_ROOT/3.1.404/5.0.100}/* $DOTNET_ROOT/
+    - name: Setup side by side .NET SDKs on *nix
+      if: matrix.os != 'windows-latest'
+      run: |
+        rsync -a ${DOTNET_ROOT/3.1.404/5.0.100}/* $DOTNET_ROOT/
 
-      - name: Install dependencies
-        run: dotnet restore -v m
+    - name: Install dependencies
+      run: dotnet restore -v m
 
-      - name: Build solution
-        run: dotnet build --no-restore -c Debug -v m
+    - name: Build solution
+      run: dotnet build --no-restore -c Debug -v m
 
-      - name: Test Crip.AspNetCore.Logging.Tests
-        run: dotnet test --no-restore --no-build -v n
+    - name: Test Crip.AspNetCore.Logging.Tests
+      run: dotnet test --no-restore --no-build -v n
 
-      - name: Build Crip.AspNetCore.Logging
-        run: dotnet build Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-restore -p:Version=${{ env.APP_VERSION }}
+    - name: Build Crip.AspNetCore.Logging
+      run: dotnet build Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-restore -p:Version=${{ env.APP_VERSION }}
 
-      - name: Pack NuGet
-        run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-source -p:PackageVersion=${{ env.APP_VERSION }}
+    - name: Pack NuGet
+      run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-source -p:PackageVersion=${{ env.APP_VERSION }}
 
-      - name: Publish GitHub NuGet
-        run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg"
+    - name: Publish GitHub NuGet
+      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg"
 
-      - name: Publish nuget.org NuGet
-        run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+    - name: Publish nuget.org NuGet
+      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
