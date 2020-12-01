@@ -43,7 +43,9 @@ jobs:
       run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}-alpha.${{ github.run_number }}" >> $GITHUB_ENV
 
     - name: Application version
-      run: echo "v${{ env.APP_VERSION }}"
+      run: echo "v${APP_VERSION}"
+      env:
+        APP_VERSION: ${{ env.APP_VERSION }}
 
     - uses: actions/checkout@v2
 
@@ -56,9 +58,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.100
-        source-url: https://nuget.pkg.github.com/crip-home/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup side by side .NET SDKs on *nix
       if: matrix.os != 'windows-latest'
@@ -82,7 +81,13 @@ jobs:
 
     - name: Publish GitHub NuGet
       if: endsWith(github.ref, '/master')
-      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg"
+      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${APP_VERSION}.nupkg" -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/crip-home/index.json --skip-duplicate
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        APP_VERSION: ${{ env.APP_VERSION }}
 
     - name: Publish nuget.org NuGet
-      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${APP_VERSION}.nupkg" -k ${NUGET_API_KEY} -s https://api.nuget.org/v3/index.json
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        APP_VERSION: ${{ env.APP_VERSION }}
