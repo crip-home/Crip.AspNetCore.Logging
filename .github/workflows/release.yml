@@ -1,13 +1,11 @@
-name: .NET Core
+name: build, test and publish nuget
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 env:
-  APP_VERSION: 1.0.0.${{ github.run_number }}
+  APP_VERSION: 1.0.1.${{ github.run_number }}
 
 jobs:
   build:
@@ -16,16 +14,23 @@ jobs:
 
     steps:
     - name: Application version
-      run: |
-        echo "${{ env.APP_VERSION }}"
+      run: echo "${{ env.APP_VERSION }}"
     - uses: actions/checkout@v2
-    - name: Setup .NET Core
+    - name: Setup .NET Core 3.1
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.404
+    - name: Setup .NET Core 5.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.100
         source-url: https://nuget.pkg.github.com/crip-home/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup side by side .NET SDKs on *nix
+      if: matrix.os != 'windows-latest'
+      run: |
+        rsync -a ${DOTNET_ROOT/3.1.404/5.0.100}/* $DOTNET_ROOT/
     - name: Install dependencies
       run: dotnet restore -v m
     - name: Build solution
