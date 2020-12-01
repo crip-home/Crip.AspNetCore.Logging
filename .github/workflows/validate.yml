@@ -13,13 +13,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup .NET Core
+      - name: Setup .NET Core 3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.404
+      - name: Setup .NET Core 5.0
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.100
+      - name: Setup side by side .NET SDKs on *nix
+        if: matrix.os != 'windows-latest'
+        run: |
+          rsync -a ${DOTNET_ROOT/3.1.404/5.0.100}/* $DOTNET_ROOT/
       - name: Install dependencies
         run: dotnet restore -v m
       - name: Build solution
         run: dotnet build --no-restore -c Debug -v m
       - name: Test Crip.AspNetCore.Logging.Tests
-        run: dotnet test Crip.AspNetCore.Logging.Tests/Crip.AspNetCore.Logging.Tests.csproj -v m
+        run: dotnet test --no-restore --no-build -v m
