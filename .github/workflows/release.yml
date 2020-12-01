@@ -81,6 +81,7 @@ jobs:
       run: dotnet pack Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj -c Release --no-build --include-source -p:PackageVersion=${{ env.APP_VERSION }}
 
     - name: Publish GitHub NuGet
+      if: endsWith(github.ref, '/master')
       run: dotnet nuget push "Crip.AspNetCore.Logging/bin/Release/Crip.AspNetCore.Logging.${{ env.APP_VERSION }}.nupkg"
 
     - name: Publish nuget.org NuGet
