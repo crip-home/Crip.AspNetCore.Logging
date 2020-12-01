@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: init
     steps:
+    - name: What we are doing
+      run: echo "ref=${{ github.ref }},base_ref=${{ github.base_ref }},event_name=${{ github.event_name }},head_ref=${{ github.head_ref }}"
+
     - name: Set release version
       if: endsWith(github.ref, '/master')
       run: echo "APP_VERSION=${{ env.APP_VERSION_BASE }}" >> $GITHUB_ENV
