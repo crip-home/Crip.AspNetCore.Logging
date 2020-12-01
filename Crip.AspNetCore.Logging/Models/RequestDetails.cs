@@ -46,17 +46,17 @@ namespace Crip.AspNetCore.Logging
 
             Protocol = $"HTTP/{request.Version}";
             Method = request.Method.Method;
-            Scheme = request.RequestUri.Scheme;
-            Host = request.RequestUri.Host;
-            Path = request.RequestUri.AbsolutePath;
-            QueryString = request.RequestUri.Query;
-            Url = request.RequestUri.ToString();
+            Scheme = request.RequestUri?.Scheme;
+            Host = request.RequestUri?.Host;
+            Path = request.RequestUri?.AbsolutePath;
+            QueryString = request.RequestUri?.Query;
+            Url = request.RequestUri?.ToString();
             Headers = request.Headers.ToDictionary(
                 header => header.Key,
                 header => new StringValues(header.Value.ToArray()));
 
             Content = request.Content?.ReadAsStreamAsync().GetAwaiter().GetResult();
-            ContentType = request.Content?.Headers.ContentType.ToString();
+            ContentType = request.Content?.Headers.ContentType?.ToString();
         }
 
         public string? Protocol { get; init; }

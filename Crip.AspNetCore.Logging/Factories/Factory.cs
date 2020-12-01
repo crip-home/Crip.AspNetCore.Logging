@@ -26,7 +26,7 @@ namespace Crip.AspNetCore.Logging
         /// <returns>A service object of type <typeparamref name="T"/> or null if there is no such service.</returns>
         protected T GetService<T>()
         {
-            return _services.GetService<T>();
+            return _services.GetService<T>() ?? throw new ArgumentNullException(typeof(T).FullName);
         }
     }
 }

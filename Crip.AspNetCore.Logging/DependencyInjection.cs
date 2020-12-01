@@ -65,7 +65,7 @@ namespace Crip.AspNetCore.Logging
         ///         .AddRequestLogging()
         ///         .AddRequestLoggingCookieValueMiddleware();
         /// </code>
-        /// The cookie header will write only first 10 characters
+        /// The cookie header will write only first 10 characters.
         /// <code>
         ///     Cookie: .AspNetCore.Identity.Application=CfDJ8NfEhW***
         /// </code>
