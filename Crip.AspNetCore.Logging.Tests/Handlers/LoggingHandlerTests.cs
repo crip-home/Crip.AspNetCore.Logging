@@ -121,7 +121,7 @@ Location: http://example.com/
         private HttpMessageInvoker CreateInvoker(HttpResponseMessage response, LogEventLevel logLevel = LogEventLevel.Fatal)
         {
             var serviceProvider = CreateProvider(logLevel);
-            var handler = serviceProvider.GetService<LoggingHandler<Foo>>();
+            var handler = serviceProvider.GetRequiredService<LoggingHandler<Foo>>();
             handler.InnerHandler = new TestHttpHandler(response);
 
             return new HttpMessageInvoker(handler);

@@ -43,9 +43,9 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Information);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
-            ILoggerFactory factory = provider.GetService<ILoggerFactory>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
+            ILoggerFactory factory = provider.GetRequiredService<ILoggerFactory>();
             ILogger<RequestLoggingMiddleware> logger = factory.CreateLogger<RequestLoggingMiddleware>();
 
             logger.IsEnabled(LogLevel.Error).Should().BeTrue();
@@ -81,8 +81,8 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Debug);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 async ctx =>
                 {
@@ -117,8 +117,8 @@ Foo: Bar
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Verbose);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 async ctx =>
                 {
@@ -157,8 +157,8 @@ Response body
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Information);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 ctx =>
                 {
@@ -186,8 +186,8 @@ Response body
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Fatal);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 async ctx => await ctx.Response.WriteAsync("Response body"),
                 contextLoggerFactory,
@@ -202,24 +202,20 @@ Response body
             actual.Should().BeEmpty();
         }
 
-        private static IContextLoggerFactory SetupFactory(LogEventLevel logLevel)
-        {
-            return ServiceProvider(logLevel).GetService<IContextLoggerFactory>();
-        }
+        private static IContextLoggerFactory SetupFactory(LogEventLevel logLevel) =>
+            ServiceProvider(logLevel).GetRequiredService<IContextLoggerFactory>();
 
-        private static IServiceProvider ServiceProvider(LogEventLevel logLevel)
-        {
-            return new ServiceCollection()
-                .AddSingleton<ILoggerFactory>(i => CreateSerilogLoggerFactory(logLevel))
-                .AddSingleton<IRequestLogger>(i => new RequestLogger(new(null), new(null)))
-                .AddSingleton<IResponseLogger>(i => new ResponseLogger(new(null), new(null)))
+        private static IServiceProvider ServiceProvider(LogEventLevel logLevel) =>
+            new ServiceCollection()
+                .AddSingleton<ILoggerFactory>(_ => CreateSerilogLoggerFactory(logLevel))
+                .AddSingleton<IRequestLogger>(_ => new RequestLogger(new(null), new(null)))
+                .AddSingleton<IResponseLogger>(_ => new ResponseLogger(new(null), new(null)))
                 .AddSingleton<IBasicInfoLogger, BasicInfoLogger>()
                 .AddSingleton<IHttpLoggerFactory, HttpLoggerFactory>()
                 .AddSingleton<IContextLoggerFactory, ContextLoggerFactory>()
                 .AddSingleton<IMeasurable, TimeMeasurable>()
-                .AddSingleton<IStopwatch>(i => new MockStopwatch(TimeSpan.FromSeconds(0.1)))
+                .AddSingleton<IStopwatch>(_ => new MockStopwatch(TimeSpan.FromSeconds(0.1)))
                 .BuildServiceProvider();
-        }
 
         private static SerilogLoggerFactory CreateSerilogLoggerFactory(LogEventLevel logLevel)
         {

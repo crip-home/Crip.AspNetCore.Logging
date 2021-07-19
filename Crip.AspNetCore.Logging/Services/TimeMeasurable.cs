@@ -30,7 +30,7 @@ namespace Crip.AspNetCore.Logging
         /// <inheritdoc />
         public IMeasurable StartMeasure()
         {
-            var stopwatch = _services.GetService<IStopwatch>() ?? throw new ArgumentNullException(nameof(IStopwatch));
+            var stopwatch = _services.GetRequiredService<IStopwatch>();
             return new TimeMeasurable(_services, stopwatch);
         }
 

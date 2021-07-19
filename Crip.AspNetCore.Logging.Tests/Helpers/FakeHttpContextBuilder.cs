@@ -29,67 +29,67 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             _context.SetEndpoint(CreateEndpoint(controllerName));
 
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetMethod(HttpMethod method)
         {
             _context.Request.Method = method.ToString().ToUpper();
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetScheme(HttpScheme scheme)
         {
             _context.Request.Scheme = scheme.ToString().ToLower();
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetHost(HostString host)
         {
             _context.Request.Host = host;
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetPathBase(PathString path)
         {
             _context.Request.PathBase = path;
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetPath(PathString path)
         {
             _context.Request.Path = path;
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
-        public FakeHttpContextBuilder SetQuery(Dictionary<string, string> query)
+        public FakeHttpContextBuilder SetQuery(Dictionary<string, string?> query)
         {
             _context.Request.QueryString = QueryString.Create(query);
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetRequestHeaders(Dictionary<string, StringValues>? headers)
         {
             AddRange(_context.Request.Headers, headers);
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetResponseHeaders(Dictionary<string, StringValues>? headers)
         {
             AddRange(_context.Response.Headers, headers);
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetRequestContentType(string contentType)
         {
             _context.Request.ContentType = contentType;
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetResponseContentType(string contentType)
         {
             _context.Response.ContentType = contentType;
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetRequestBody(string content)
@@ -99,63 +99,50 @@ namespace Crip.AspNetCore.Logging.Tests
             _context.Request.Body.Write(bodyBytes, 0, content.Length);
             _context.Request.Body.Position = 0;
 
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetResponseBody(string content)
         {
             _context.Response.Body = new MemoryStream(Encoding.UTF8.GetBytes(content));
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetStatus(HttpStatusCode status)
         {
             _context.Response.StatusCode = (int)status;
-            return new FakeHttpContextBuilder(_context);
+            return new(_context);
         }
 
         public FakeHttpContextBuilder SetRequest(
             HttpMethod method = HttpMethod.Get,
             HttpScheme scheme = HttpScheme.Http,
-            Dictionary<string, string>? queryParams = null,
-            Dictionary<string, StringValues>? headers = null)
-        {
-            return SetMethod(method)
+            Dictionary<string, string?>? queryParams = null,
+            Dictionary<string, StringValues>? headers = null) =>
+            SetMethod(method)
                 .SetScheme(scheme)
                 .SetHost(new("localhost"))
                 .SetPathBase("/master")
                 .SetPath("/slave")
-                .SetQuery(queryParams ?? new Dictionary<string, string>())
+                .SetQuery(queryParams ?? new Dictionary<string, string?>())
                 .SetRequestHeaders(headers);
-        }
 
-        public HttpContext Create()
-        {
-            return _context;
-        }
+        public HttpContext Create() => _context;
 
-        private static Endpoint CreateEndpoint(string controllerName)
-        {
-            return new Endpoint(
+        private static Endpoint CreateEndpoint(string controllerName) =>
+            new Endpoint(
                 _ => Task.CompletedTask,
                 EndpointMetadata(controllerName),
                 $"{controllerName}Controller");
-        }
 
-        private static EndpointMetadataCollection EndpointMetadata(string name)
-        {
-            var descriptor = new ControllerActionDescriptor { ControllerName = name };
-            return new EndpointMetadataCollection(descriptor);
-        }
+        private static EndpointMetadataCollection EndpointMetadata(string name) =>
+            new(new ControllerActionDescriptor { ControllerName = name });
 
         private static void AddRange(IHeaderDictionary target, IDictionary<string, StringValues>? values)
         {
-            if (values is null)
-            {
-                return;
-            }
+            if (values is null) return;
 
-            foreach ((string? key, StringValues value) in values)
+            foreach (var (key, value) in values)
             {
                 target[key] = value;
             }

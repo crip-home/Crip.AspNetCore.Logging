@@ -8,7 +8,7 @@ namespace Crip.AspNetCore.Logging
     /// </summary>
     internal class LoggingStopwatch : IStopwatch
     {
-        private readonly Stopwatch _stopwatch = new Stopwatch();
+        private readonly Stopwatch _stopwatch = new();
 
         /// <inheritdoc/>
         public bool IsRunning => _stopwatch.IsRunning;
