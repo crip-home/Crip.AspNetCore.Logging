@@ -14,6 +14,10 @@ namespace Crip.AspNetCore.Logging
 {
     public class ResponseDetails
     {
+        public ResponseDetails()
+        {
+        }
+
         private ResponseDetails(IStopwatch? stopwatch)
         {
             Stopwatch = stopwatch;

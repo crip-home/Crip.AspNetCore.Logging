@@ -91,7 +91,7 @@ namespace Crip.AspNetCore.Logging.Tests
 
             // Assert
             loggerMock.VerifyLogging(
-                "POST https://localhost/master/slave?cat=221 at 00:00:02:000 with 200 OK",
+                "POST https://localhost/master/slave?cat=221 at 00:00:02.000 with 200 OK",
                 LogLevel.Information);
         }
 
@@ -122,7 +122,7 @@ namespace Crip.AspNetCore.Logging.Tests
 
             // Assert
             loggerMock.VerifyLogging(
-                "POST http://example.com/primary/secondary?cats=1 at 00:00:03:000 with 500 InternalServerError",
+                "POST http://example.com/primary/secondary?cats=1 at 00:00:03.000 with 500 InternalServerError",
                 LogLevel.Information);
         }
 
