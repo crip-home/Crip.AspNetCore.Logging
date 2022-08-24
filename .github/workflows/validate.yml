@@ -15,9 +15,7 @@ jobs:
 
   build:
     env:
-      BUILD_CONFIG: Release
-      SOLUTION: Crip.Extensions.Correlation.sln
-      TESTS: Crip.Extensions.Correlation.Tests/Crip.Extensions.Correlation.Tests.csproj
+      TESTS: Crip.AspNetCore.Logging.Tests/Crip.AspNetCore.Logging.Tests.csproj
 
     runs-on: ubuntu-latest
     needs: init
