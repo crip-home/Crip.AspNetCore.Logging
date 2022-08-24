@@ -25,13 +25,9 @@ namespace Crip.AspNetCore.Logging
         /// </summary>
         /// <param name="header">Request header.</param>
         /// <returns>Logging ready value.</returns>
-        public string PrepareHeader(KeyValuePair<string, StringValues> header)
-        {
-            var (key, values) = header;
-
-            return _middlewares.Aggregate(
-                values.ToString(),
-                (current, middleware) => middleware.Modify(key, current));
-        }
+        public string PrepareHeader(KeyValuePair<string, StringValues> header) =>
+            _middlewares.Aggregate(
+                header.Value.ToString(),
+                (_, middleware) => middleware.Modify(header.Key, header.Value));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -20,7 +20,7 @@ namespace Crip.AspNetCore.Logging.Tests
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(level);
             Mock<IStopwatch> stopwatchMock = new();
-            HttpContext context = new FakeHttpContextBuilder().Create();
+            HttpContext context = new FakeHttpContextBuilder().SetHost("localhost").Create();
             var request = RequestDetails.From(context.Request);
             var response = ResponseDetails.From(context.Response, stopwatchMock.Object);
             BasicInfoLogger sut = new();
@@ -48,7 +48,7 @@ namespace Crip.AspNetCore.Logging.Tests
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(level);
             Mock<IStopwatch> stopwatchMock = new();
-            HttpContext context = new FakeHttpContextBuilder().Create();
+            HttpContext context = new FakeHttpContextBuilder().SetHost("localhost").Create();
             var request = RequestDetails.From(context.Request);
             var response = ResponseDetails.From(context.Response, stopwatchMock.Object);
             BasicInfoLogger sut = new();
@@ -78,7 +78,7 @@ namespace Crip.AspNetCore.Logging.Tests
             HttpContext context = new FakeHttpContextBuilder()
                 .SetRequest(
                     HttpMethod.Post,
-                    HttpScheme.Https,
+                    "https",
                     new() { { "cat", "221" } })
                 .Create();
 
@@ -105,8 +105,8 @@ namespace Crip.AspNetCore.Logging.Tests
 
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Post)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetPathBase("/primary")
                 .SetPath("/secondary")
                 .SetQuery(new() { { "cats", "1" } })

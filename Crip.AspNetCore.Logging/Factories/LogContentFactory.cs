@@ -40,7 +40,7 @@ namespace Crip.AspNetCore.Logging
             ms.Seek(0, SeekOrigin.Begin);
 
             var middlewares = _middlewares
-                .Where(x => contentType?.Contains(x.ContentType, Comparison) ?? false)
+                .Where(x => (contentType?.IndexOf(x.ContentType, Comparison) ?? -1) >= 0)
                 .ToList();
 
             foreach (var middleware in middlewares)

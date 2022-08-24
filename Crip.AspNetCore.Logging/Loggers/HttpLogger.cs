@@ -100,7 +100,7 @@ namespace Crip.AspNetCore.Logging
             var scope = new RequestScope();
             if (request is not null)
             {
-                scope = new RequestScope(request.Url, request.Method);
+                scope = new RequestScope(request.Url ?? string.Empty, request.Method ?? string.Empty);
             }
 
             return _logger.BeginScope(scope);

@@ -42,7 +42,7 @@ namespace Crip.AspNetCore.Logging.Tests.Handlers
 
             // Assert
             List<string> actual = TestCorrelator.GetLogEventsFromCurrentContext().Select(FormatLogEvent).ToList();
-            actual.Should().BeEquivalentTo("Information: GET http://example.com/ at 00:00:00:100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.LoggingHandler.Foo\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://example.com/\", HttpMethod: \"GET\" }");
+            actual.Should().BeEquivalentTo("Information: GET http://example.com/ at 00:00:00.100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.LoggingHandler.Foo\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://example.com/\", HttpMethod: \"GET\" }");
         }
 
         [Fact, Trait("Category", "Integration")]
@@ -75,7 +75,7 @@ Authorization: Bearer token-value
                 @"Debug: HTTP/1.1 200 OK
 Location: http://example.com/
  { SourceContext: ""Crip.AspNetCore.Logging.LoggingHandler.Foo"", EventName: ""HttpResponse"", StatusCode: 200, Elapsed: 100, Endpoint: ""http://example.com/"", HttpMethod: ""GET"" }",
-                "Information: GET http://example.com/ at 00:00:00:100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.LoggingHandler.Foo\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://example.com/\", HttpMethod: \"GET\" }"
+                "Information: GET http://example.com/ at 00:00:00.100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.LoggingHandler.Foo\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://example.com/\", HttpMethod: \"GET\" }"
             );
         }
 
@@ -114,7 +114,7 @@ Location: http://example.com/
 
 {""response"":2}
  { SourceContext: ""Crip.AspNetCore.Logging.LoggingHandler.Foo"", EventName: ""HttpResponse"", StatusCode: 200, Elapsed: 100, Endpoint: ""http://example.com/"", HttpMethod: ""POST"" }",
-                "Information: POST http://example.com/ at 00:00:00:100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.LoggingHandler.Foo\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://example.com/\", HttpMethod: \"POST\" }"
+                "Information: POST http://example.com/ at 00:00:00.100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.LoggingHandler.Foo\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://example.com/\", HttpMethod: \"POST\" }"
             );
         }
 

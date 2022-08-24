@@ -29,7 +29,7 @@ namespace Crip.AspNetCore.Logging
                 .Split(';')
                 .Aggregate(new List<string>(), ParseValue);
 
-            return string.Join(';', parsedValues);
+            return string.Join(";", parsedValues);
         }
 
         private static bool IsNotCookieHeader(string key)
@@ -59,7 +59,7 @@ namespace Crip.AspNetCore.Logging
 
         private static (string Key, string Value) SplitKeyAndValue(string prop)
         {
-            var parts = prop.Split('=', 2);
+            var parts = prop.Split(new[] { '=' }, 2);
 
             return (parts[0], parts[1]);
         }

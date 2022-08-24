@@ -21,11 +21,7 @@ namespace Crip.AspNetCore.Logging.Tests
         [InlineData("/api", "", false)]
         public void EndpointPredicate_Filter_ExcludePatterns(string pattern, string path, bool expected)
         {
-            // Arrange
-            Mock<HttpRequest> requestMock = new();
-
-            // Mock
-            requestMock.SetupGet(r => r.Path).Returns(new PathString(path));
+            var requestMock = MockRequest(path);
             var request = RequestDetails.From(requestMock.Object);
 
             EndpointPredicate predicate = new(true, new[] { pattern });
@@ -52,11 +48,7 @@ namespace Crip.AspNetCore.Logging.Tests
         [InlineData("/health/*", "", true)]
         public void EndpointPredicate_Filter_IncludePatterns(string pattern, string path, bool expected)
         {
-            // Arrange
-            Mock<HttpRequest> requestMock = new();
-
-            // Mock 
-            requestMock.SetupGet(r => r.Path).Returns(new PathString(path));
+            var requestMock = MockRequest(path);
             var request = RequestDetails.From(requestMock.Object);
             EndpointPredicate predicate = new(false, new[] { pattern });
 
@@ -70,11 +62,7 @@ namespace Crip.AspNetCore.Logging.Tests
         [Fact, Trait("Category", "Unit")]
         public void EndpointPredicate_Filter_MultipleIncludePatterns()
         {
-            // Arrange
-            Mock<HttpRequest> requestMock = new();
-
-            // Mock
-            requestMock.SetupGet(r => r.Path).Returns(new PathString("/api/123/foo"));
+            var requestMock = MockRequest(new PathString("/api/123/foo"));
             var request = RequestDetails.From(requestMock.Object);
             EndpointPredicate predicate = new(false, new[] { "/api", "/health", "/ping", "/" });
 
@@ -96,6 +84,19 @@ namespace Crip.AspNetCore.Logging.Tests
 
             // Assert
             act.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        private static Mock<HttpRequest> MockRequest(string path)
+        {
+            Mock<HttpRequest> requestMock = new();
+
+            requestMock.SetupGet(r => r.Host).Returns(new HostString("localhost"));
+            requestMock.SetupGet(r => r.QueryString).Returns(new QueryString(""));
+            requestMock.SetupGet(r => r.PathBase).Returns(new PathString(""));
+            requestMock.SetupGet(r => r.Scheme).Returns("http");
+            requestMock.SetupGet(r => r.Path).Returns(new PathString(path));
+
+            return requestMock;
         }
     }
 }

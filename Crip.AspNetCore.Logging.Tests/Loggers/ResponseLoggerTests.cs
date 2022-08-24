@@ -46,7 +46,7 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(level);
-            HttpContext context = new FakeHttpContextBuilder().Create();
+            HttpContext context = new FakeHttpContextBuilder().SetHost("localhost").Create();
             Mock<IStopwatch> stopwatchMock = new();
             var request = RequestDetails.From(context.Request);
             var response = ResponseDetails.From(context.Response, stopwatchMock.Object);
@@ -72,6 +72,7 @@ namespace Crip.AspNetCore.Logging.Tests
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(LogLevel.Debug);
             HttpContext context = new FakeHttpContextBuilder()
+                .SetHost("localhost")
                 .SetResponseHeaders(new() { { "foo", new(new[] { "bar", "baz" }) } })
                 .Create();
             Mock<IStopwatch> stopwatchMock = new();
@@ -95,6 +96,7 @@ namespace Crip.AspNetCore.Logging.Tests
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(LogLevel.Trace);
             HttpContext context = new FakeHttpContextBuilder()
+                .SetHost("localhost")
                 .SetResponseBody("conflict response content")
                 .SetResponseHeaders(new() { { "foo", new(new[] { "bar", "baz" }) } })
                 .SetStatus(HttpStatusCode.Conflict)
@@ -124,6 +126,7 @@ namespace Crip.AspNetCore.Logging.Tests
             Mock<IRequestContentLogMiddleware> contentMiddleware = new();
             var contentMiddlewares = new List<IRequestContentLogMiddleware> { contentMiddleware.Object };
             HttpContext context = new FakeHttpContextBuilder()
+                .SetHost("localhost")
                 .SetResponseBody("response")
                 .SetResponseContentType("text/plain")
                 .Create();

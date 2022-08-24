@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Primitives;
+using Moq;
 
 namespace Crip.AspNetCore.Logging.Tests
 {
@@ -27,7 +29,12 @@ namespace Crip.AspNetCore.Logging.Tests
 
         public FakeHttpContextBuilder SetEndpoint(string controllerName)
         {
-            _context.SetEndpoint(CreateEndpoint(controllerName));
+            Mock<IEndpointFeature> endpointFeature = new();
+            endpointFeature
+                .SetupGet(endpoint => endpoint.Endpoint)
+                .Returns(CreateEndpoint(controllerName));
+
+            _context.Features.Set(endpointFeature.Object);
 
             return new(_context);
         }
@@ -38,9 +45,9 @@ namespace Crip.AspNetCore.Logging.Tests
             return new(_context);
         }
 
-        public FakeHttpContextBuilder SetScheme(HttpScheme scheme)
+        public FakeHttpContextBuilder SetScheme(string scheme)
         {
-            _context.Request.Scheme = scheme.ToString().ToLower();
+            _context.Request.Scheme = scheme.ToLower();
             return new(_context);
         }
 
@@ -49,6 +56,8 @@ namespace Crip.AspNetCore.Logging.Tests
             _context.Request.Host = host;
             return new(_context);
         }
+
+        public FakeHttpContextBuilder SetHost(string host) => SetHost(new HostString(host));
 
         public FakeHttpContextBuilder SetPathBase(PathString path)
         {
@@ -115,13 +124,13 @@ namespace Crip.AspNetCore.Logging.Tests
         }
 
         public FakeHttpContextBuilder SetRequest(
-            HttpMethod method = HttpMethod.Get,
-            HttpScheme scheme = HttpScheme.Http,
+            HttpMethod? method = null,
+            string scheme = "http",
             Dictionary<string, string?>? queryParams = null,
             Dictionary<string, StringValues>? headers = null) =>
-            SetMethod(method)
+            SetMethod(method ?? HttpMethod.Get)
                 .SetScheme(scheme)
-                .SetHost(new("localhost"))
+                .SetHost("localhost")
                 .SetPathBase("/master")
                 .SetPath("/slave")
                 .SetQuery(queryParams ?? new Dictionary<string, string?>())
@@ -129,11 +138,11 @@ namespace Crip.AspNetCore.Logging.Tests
 
         public HttpContext Create() => _context;
 
-        private static Endpoint CreateEndpoint(string controllerName) =>
-            new Endpoint(
-                _ => Task.CompletedTask,
-                EndpointMetadata(controllerName),
-                $"{controllerName}Controller");
+        private static Endpoint CreateEndpoint(string controllerName) => new(
+            _ => Task.CompletedTask,
+            EndpointMetadata(controllerName),
+            $"{controllerName}Controller"
+        );
 
         private static EndpointMetadataCollection EndpointMetadata(string name) =>
             new(new ControllerActionDescriptor { ControllerName = name });

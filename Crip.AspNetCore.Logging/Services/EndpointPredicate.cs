@@ -26,8 +26,8 @@ namespace Crip.AspNetCore.Logging
             _expressions = patterns
                 .Select(i => "^" + Regex
                     .Escape(i)
-                    .Replace(@"\*", ".*", StringComparison.InvariantCulture)
-                    .Replace(@"\?", ".", StringComparison.InvariantCulture) + "$")
+                    .Replace(@"\*", ".*")
+                    .Replace(@"\?", ".") + "$")
                 .Select(i => new Regex(i, RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase))
                 .ToArray();
         }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -21,7 +21,7 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(level);
-            HttpContext context = new FakeHttpContextBuilder().Create();
+            HttpContext context = new FakeHttpContextBuilder().SetHost("localhost").Create();
             RequestLogger sut = new(new(null), new(null));
 
             // Act
@@ -45,7 +45,7 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             Mock<ILogger> loggerMock = CreateFor(level);
-            HttpContext context = new FakeHttpContextBuilder().Create();
+            HttpContext context = new FakeHttpContextBuilder().SetHost("localhost").Create();
             RequestLogger sut = new(new(null), new(null));
 
             // Act
@@ -70,10 +70,11 @@ namespace Crip.AspNetCore.Logging.Tests
             HttpContext context = new FakeHttpContextBuilder()
                 .SetRequest(
                     HttpMethod.Post,
-                    HttpScheme.Https,
+                    "https",
                     new() { { "foo", "bar" } },
                     new() { { "foo", new(new[] { "bar", "baz" }) } })
                 .Create();
+
             RequestLogger sut = new(new(null), new(null));
 
             // Act
@@ -97,10 +98,11 @@ namespace Crip.AspNetCore.Logging.Tests
                 .SetRequestHeaders(new() { { "foo", new(new[] { "bar", "baz" }) } })
                 .SetRequestContentType("text/plain")
                 .SetMethod(HttpMethod.Post)
-                .SetScheme(HttpScheme.Https)
-                .SetHost(new("example.org"))
+                .SetScheme("https")
+                .SetHost("example.org")
                 .SetQuery(new() { { "foo", "bar" } })
                 .Create();
+
             RequestLogger sut = new(new(null), new(null));
 
             // Act
