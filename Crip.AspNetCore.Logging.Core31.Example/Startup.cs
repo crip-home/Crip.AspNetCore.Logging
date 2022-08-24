@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Crip.AspNetCore.Logging.Example.Web
+namespace Crip.AspNetCore.Logging.Core31.Example
 {
     public class Startup
     {

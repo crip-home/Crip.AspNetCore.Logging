@@ -2,7 +2,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Crip.AspNetCore.Logging.Example.Web.Controllers
+namespace Crip.AspNetCore.Logging.Core31.Example.Controllers
 {
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]

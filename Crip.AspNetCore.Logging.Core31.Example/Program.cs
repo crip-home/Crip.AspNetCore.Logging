@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
-namespace Crip.AspNetCore.Logging.Example.Web
+namespace Crip.AspNetCore.Logging.Core31.Example
 {
     public class Program
     {
