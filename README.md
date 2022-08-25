@@ -209,4 +209,4 @@ configuration file:
 
 ---
 
-For more technical details take a look in [example project Startup file](./Crip.AspNetCore.Logging.Example.Web/Startup.cs).
+For more technical details take a look in [example project Startup file](./examples/Crip.AspNetCore.Logging.Core31.Example/Startup.cs).
