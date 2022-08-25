@@ -9,12 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog.AspNetCore" Version="3.4.0"/>
-        <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj"/>
+        <ProjectReference Include="..\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj" />
     </ItemGroup>
 
 </Project>

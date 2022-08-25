@@ -49,7 +49,7 @@ namespace Crip.AspNetCore.Logging
             this IServiceCollection services,
             params string[] ignore)
         {
-            return services.AddSingleton<IHttpRequestPredicate>(provider =>
+            return services.AddSingleton<IHttpRequestPredicate>(_ =>
                 new EndpointPredicate(true, ignore));
         }
 

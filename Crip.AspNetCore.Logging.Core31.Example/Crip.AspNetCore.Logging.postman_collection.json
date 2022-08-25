@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "70e864e9-8a61-4b83-8b82-4219362df5c2",
+		"name": "Crip.AspNetCore.Logging example application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "339835"
+	},
+	"item": [
+		{
+			"name": "/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						""
+					]
+				},
+				"description": "Should log request INFO level as default setting is set to write only that:\n\n`\"Crip.AspNetCore.Logging.RequestLoggingMiddleware\": \"Information\"`\n\n```\n[12:07:59 INF] GET http://localhost:5000/ at 00:00:02.582 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=2583, Endpoint=\"http://localhost:5000/\", HttpMethod=\"GET\", RequestId=\"0HMK6F3CLCVI0:00000003\", RequestPath=\"/\", SpanId=\"|4728c497-47ed81f0e7b7b149.\", TraceId=\"4728c497-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/undefined",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/undefined",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"undefined"
+					]
+				},
+				"description": "Should log request INFO level as default setting is set to write only that:\n\n`\"Crip.AspNetCore.Logging.RequestLoggingMiddleware\": \"Information\"`\n\n```\n[12:08:41 INF] GET http://localhost:5000/undefined at 00:00:01.920 with 404 NotFound {Crip.AspNetCore.Logging.RequestLoggingMiddleware} {EventName=\"HttpResponse\", StatusCode=404, Elapsed=1921, Endpoint=\"http://localhost:5000/undefined\", HttpMethod=\"GET\", RequestId=\"0HMK6F3CLCVI0:00000004\", RequestPath=\"/undefined\", SpanId=\"|4728c498-47ed81f0e7b7b149.\", TraceId=\"4728c498-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/client",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/client",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"client"
+					]
+				},
+				"description": "Should log request INFO level as default setting is set to write only that:\n\n`\"Crip.AspNetCore.Logging.RequestLoggingMiddleware\": \"Information\"`\n\n```\n[12:10:16 INF] GET http://localhost:5000/api/client at 00:00:05.607 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Client} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=5608, Endpoint=\"http://localhost:5000/api/client\", HttpMethod=\"GET\", RequestId=\"0HMK6F3CLCVI0:00000005\", RequestPath=\"/api/client\", SpanId=\"|4728c499-47ed81f0e7b7b149.\", TraceId=\"4728c499-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\"}\n\n```\n\nBut in same time this method calls `NamedHttpClient` and produces logs for it as configured:\n\n`\"Crip.AspNetCore.Logging.LoggingHandler.NamedHttpClient\": \"Verbose\"`\n\nClient request:\n\n```\n[12:22:31 VRB] POST http://postman-echo.com/post?foo1=bar1&foo2=bar2 HTTP/1.1\n\n{\"bar1\":\"bazz1\",\"bar2\":\"bazz2\"}\n {Crip.AspNetCore.Logging.LoggingHandler.NamedHttpClient} {EventName=\"HttpRequest\", Endpoint=\"http://postman-echo.com/post?foo1=bar1&foo2=bar2\", HttpMethod=\"POST\", Uri=http://postman-echo.com/post?foo1=bar1&foo2=bar2, ActionId=\"6cbc0e30-b778-4f53-ae79-43050d31a2a3\", ActionName=\"Crip.AspNetCore.Logging.Core31.Example.Controllers.ClientController.Index (Crip.AspNetCore.Logging.Core31.Example)\", RequestId=\"0HMK6F3CLCVI0:00000006\", RequestPath=\"/api/client\", SpanId=\"|4728c49a-47ed81f0e7b7b149.\", TraceId=\"4728c49a-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\", Scope=[\"HTTP POST http://postman-echo.com/post?\noo1=bar1&foo2=bar2\"]}\n\n```\n\nClient request response:\n\n```\n[12:22:36 VRB] HTTP/1.1 200 OK\nDate: Thu, 25 Aug 2022 09:22:06 GMT\nConnection: keep-alive\nETag: W/\"1cc-otEGAzXEzdBqgcK9PkwzRlKUCnc\"\nVary: Accept-Encoding\nSet-Cookie: sails.sid=s:VtlaLY***; Path=/; HttpOnly\n\n{\"args\":{\"foo1\":\"bar1\",\"foo2\":\"bar2\"},\"data\":{\"bar1\":\"bazz1\",\"bar2\":\"bazz2\"},\"files\":{},\"form\":{},\"headers\":{\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"80\",\"host\":\"postman-echo.com\",\"x-amzn-trace-id\":\"Root=1-63073f3e-634505be529e003c13badeb4\",\"content-length\":\"31\",\"request-id\":\"|4728c49a-47ed81f0e7b7b149.1.\",\"content-type\":\"application/json; charset=utf-8\"},\"json\":{\"bar1\":\"bazz1\",\"bar2\":\"bazz2\"},\"url\":\"http://postman-echo.com/post?foo1=bar1&foo2=bar2\"}\n {Crip.AspNetCore.Logging.LoggingHandler.NamedHttpClient} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=261, Endpoint=\"http://postman-echo.com/post?foo1=bar1&foo2=bar2\", HttpMethod=\"POST\", Uri=http://postman-echo.com/post?foo1=bar1&foo2=bar2, ActionId=\"6cbc0e30-b778-4f53-ae79-43050d31a2a3\", ActionName=\"Crip.AspNetCore.Logging.Core31.Example.Controllers.ClientController.Index (Crip.AspNetCore.Logging.Core31.Example)\", RequestId=\"0HMK6F3CLCVI0:00000006\", RequestPath=\"/api/client\", SpanId=\"|4728c49a-47ed81f0e7b7b149.\", TraceId=\"4728c49a-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\", Scope=[\"HTTP POST http://postman-echo.com/post?foo1=bar1&foo2=bar2\"]}\n\n```\n\nTrace details of client request:\n\n```\n[12:22:36 INF] POST http://postman-echo.com/post?foo1=bar1&foo2=bar2 at 00:00:00.261 with 200 OK {Crip.AspNetCore.Logging.LoggingHandler.NamedHttpClient} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=261, Endpoint=\"http://postman-echo.com/post?foo1=bar1&foo2=bar2\", HttpMethod=\"POST\", Uri=http://postman-echo.com/post?foo1=bar1&foo2=bar2, ActionId=\"6cbc0e30-b778-4f53-ae79-43050d31a2a3\", ActionName=\"Crip.AspNetCore.Logging.Core31.Example.Controllers.ClientController.Index (Crip.AspNetCore.Logging.Core31.Example)\", RequestId=\"0HMK6F3CLCVI0:00000006\", RequestPath=\"/api/client\", SpanId=\"|4728c49a-47ed81f0e7b7b149.\", TraceId=\"4728c49a-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\", Scope=[\"HTTP POST http://postman-echo.com/post?foo1=bar1&foo2=bar2\"]}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test"
+					]
+				},
+				"description": "Should log request all levels as this controller is configured to verbose logging:\n\n`\"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test\": \"Verbose\"`\n\nThe request:\n\n```\n[12:26:52 VRB] GET http://localhost:5000/api/test HTTP/1.1\nConnection: keep-alive\nAccept: */*\nAccept-Encoding: gzip, deflate, br\nHost: localhost:5000\nUser-Agent: PostmanRuntime/7.29.2\nPostman-Token: 6aa1f041-4e91-4d75-8b8a-705a7e95b191\n\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpRequest\", Endpoint=\"http://localhost:5000/api/test\", HttpMethod=\"GET\", RequestId=\"0HMK6F3CLCVI0:00000008\", RequestPath=\"/api/test\", SpanId=\"|4728c49c-47ed81f0e7b7b149.\", TraceId=\"4728c49c-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\"}\n\n```\n\nThe response:\n\n```\n[12:26:52 VRB] HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"shouldAppear\":true}\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=4, Endpoint=\"http://localhost:5000/api/test\", HttpMethod=\"GET\", RequestId=\"0HMK6F3CLCVI0:00000008\",RequestPath=\"/api/test\", SpanId=\"|4728c49c-47ed81f0e7b7b149.\", TraceId=\"4728c49c-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\"}\n\n```\n\nAnd trace details:\n\n```\n[12:26:52 INF] GET http://localhost:5000/api/test at 00:00:00.003 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=4, Endpoint=\"http://localhost:5000/api/test\", HttpMethod=\"GET\", RequestId=\"0HMK6F3CLCVI0:00000008\", RequestPath=\"/api/test\", SpanId=\"|4728c49c-47ed81f0e7b7b149.\", TraceId=\"4728c49c-47ed81f0e7b7b149\", ParentId=\"\", ConnectionId=\"0HMK6F3CLCVI0\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test/error",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test/error",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test",
+						"error"
+					]
+				},
+				"description": "In case of unexpected error in a controller, logs should be written:\n\nRequest:\n\n```\n[12:36:49 VRB] GET http://localhost:5000/api/test/error HTTP/1.1\nConnection: keep-alive\nAccept: */*\nAccept-Encoding: gzip, deflate, br\nHost: localhost:5000\nUser-Agent: PostmanRuntime/7.29.2\nPostman-Token: b1df9c82-0431-44b0-93b1-f765bf21dd5f\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpRequest\", Endpoint=\"http://localhost:5000/api/test/error\", HttpMethod=\"GET\", RequestId=\"0HMK6FKVMM0L3:00000002\", RequestPath=\"/api/test/error\", SpanId=\"|c9f2c319-442b002cf7a02b78.\", TraceId=\"c9f2c319-442b002cf7a02b78\", ParentId=\"\", ConnectionId=\"0HMK6FKVMM0L3\"}\n\n```\n\nAnd response:\n\n```\n[12:36:49 VRB] HTTP/1.1 500 InternalServerError\nContent-Type: text/html\nSystem ERROR!\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=500, Elapsed=4, Endpoint=\"http://localhost:5000/api/test/error\", HttpMethod=\"GET\", ActionId=\"a3f8354d-abe8-48e4-967a-dbfd9f53a18f\", ActionName=\"Crip.AspNetCore.Logging.Core31.Example.Controllers.TestController.Error (Crip.AspNetCore.Logging.Core31.Example)\", RequestId=\"0HMK6FKVMM0L3:00000002\", RequestPath=\"/api/test/error\", SpanId=\"|c9f2c319-442b002cf7a02b78.\", TraceId=\"c9f2c319-442b002cf7a02b78\", ParentId=\"\", ConnectionId=\"0HMK6FKVMM0L3\"}\n\n```\n\nAnd trace info:\n\n```\n[12:36:49 INF] GET http://localhost:5000/api/test/error at 00:00:00.004 with 500 InternalServerError {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=500, Elapsed=4,Endpoint=\"http://localhost:5000/api/test/error\", HttpMethod=\"GET\", ActionId=\"a3f8354d-abe8-48e4-967a-dbfd9f53a18f\", ActionName=\"Crip.AspNetCore.Logging.Core31.Example.Controllers.TestController.Error (Crip.AspNetCore.Logging.Core31.Example)\", RequestId=\"0HMK6FKVMM0L3:00000002\", RequestPath=\"/api/test/error\", SpanId=\"|c9f2c319-442b002cf7a02b78.\", TraceId=\"c9f2c319-442b002cf7a02b78\", ParentId=\"\", ConnectionId=\"0HMK6FKVMM0L3\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test/error/ctrl-filter-handled",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test/error/ctrl-filter-handled",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test",
+						"error",
+						"ctrl-filter-handled"
+					]
+				},
+				"description": "In case of expected error where you have defined exception filter and provide custom response, it should be logged:\n\nRequest:\n\n```\n[12:41:11 VRB] GET http://localhost:5000/api/test/error/ctrl-filter-handled HTTP/1.1\nConnection: keep-alive\nAccept: */*\nAccept-Encoding: gzip, deflate, br\nHost: localhost:5000\nUser-Agent: PostmanRuntime/7.29.2\nPostman-Token: e0c96989-e6ef-4b0c-9ca4-19318e87ac8a\n\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpRequest\", Endpoint=\"http://localhost:5000/api/test/error/ctrl-filter-handled\", HttpMethod=\"GET\", RequestId=\"0HMK6FKVMM0L5:00000001\", RequestPath=\"/api/test/error/ctrl-filter-handled\", SpanId=\"|c9f2c31a-442b002cf7a02b78.\", TraceId=\"c9f2c31a-442b002cf7a02b78\", ParentId=\"\", ConnectionId=\"0HMK6FKVMM0L5\"}\n\n```\n\nResponse:\n\n```\n[12:41:11 VRB] HTTP/1.1 401 Unauthorized\nContent-Type: application/json; charset=utf-8\n\n{\"test\":1}\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=401, Elapsed=10, Endpoint=\"http://localhost:5000/api/test/error/ctrl-filter-handled\", HttpMethod=\"GET\", RequestId=\"0HMK6FKVMM0L5:00000001\", RequestPath=\"/api/test/error/ctrl-filter-handled\", SpanId=\"|c9f2c31a-442b002cf7a02b78.\", TraceId=\"c9f2c31a-442b002cf7a02b78\", ParentId=\"\", ConnectionId=\"0HMK6FKVMM0L5\"}\n\n```\n\nAnd trace info:\n\n```\n[12:41:11 INF] GET http://localhost:5000/api/test/error/ctrl-filter-handled at 00:00:00.010 with 401 Unauthorized {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=401, Elapsed=10, Endpoint=\"http://localhost:5000/api/test/error/ctrl-filter-handled\", HttpMethod=\"GET\", RequestId=\"0HMK6FKVMM0L5:00000001\", RequestPath=\"/api/test/error/ctrl-filter-handled\", SpanId=\"|c9f2c31a-442b002cf7a02b78.\", TraceId=\"c9f2c31a-442b002cf7a02b78\", ParentId=\"\", ConnectionId=\"0HMK6FKVMM0L5\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test/silent-start",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test/silent-start",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test",
+						"silent-start"
+					]
+				},
+				"description": "Should not log anything as this request falls under endpoint exclude middleware:\n\n`.AddRequestLoggingExclude(\"/api/test/silent-start*\", \"/api/test/silent\")`"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test/silent-start/next",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test/silent-start/next",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test",
+						"silent-start",
+						"next"
+					]
+				},
+				"description": "Should not log anything as this request falls under endpoint exclude middleware:\n\n`.AddRequestLoggingExclude(\"/api/test/silent-start*\", \"/api/test/silent\")`"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test/silent",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test/silent",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test",
+						"silent"
+					]
+				},
+				"description": "Should not log anything as this request falls under endpoint exclude middleware:\n\n`.AddRequestLoggingExclude(\"/api/test/silent-start*\", \"/api/test/silent\")`"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/test/silent/next",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/test/silent/next",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test",
+						"silent",
+						"next"
+					]
+				},
+				"description": "Should log as this request does not falls under endpoint exclude middleware:\n\n`.AddRequestLoggingExclude(\"/api/test/silent-start*\", \"/api/test/silent\")`\n\nRequest:\n\n```\n[12:50:51 VRB] GET http://localhost:5000/api/test/silent/next HTTP/1.1\nConnection: keep-alive\nAccept: /\nAccept-Encoding: gzip, deflate, br\nHost: localhost:5000\nUser-Agent: PostmanRuntime/7.29.2\nPostman-Token: f16c117c-d186-4ca5-93af-c9c7b6da8166\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpRequest\", Endpoint=\"http://localhost:5000/api/test/silent/next\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JA:00000009\", RequestPath=\"/api/test/silent/next\", SpanId=\"|88045d4d-4f1b7db632e7b4c3.\", TraceId=\"88045d4d-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JA\"}\n\n```\n\nResponse:\n\n```\n[12:50:51 VRB] HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"shouldAppear\":true}\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=7, Endpoint=\"http://localhost:5000/api/test/silent/next\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JA:00000009\", RequestPath=\"/api/test/silent/next\", SpanId=\"|88045d4d-4f1b7db632e7b4c3.\", TraceId=\"88045d4d-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JA\"}\n\n```\n\nAnd trace info:\n\n```\n[12:50:51 INF] GET http://localhost:5000/api/test/silent/next at 00:00:00.006 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=7, Endpoint=\"http://localhost:5000/api/test/silent/next\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JA:00000009\", RequestPath=\"/api/test/silent/next\", SpanId=\"|88045d4d-4f1b7db632e7b4c3.\", TraceId=\"88045d4d-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JA\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/TestDebug",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/TestDebug",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"TestDebug"
+					]
+				},
+				"description": "Should log request DEBUG level as default setting is set to write only that:\n\n`\"Crip.AspNetCore.Logging.RequestLoggingMiddleware.TestDebug\": \"Debug\"`\n\nEndFragment\n\nIn this level of logging, request and response body are not logged - only headers.\n\nRequest:\n\n```\n[12:53:50 DBG] GET http://localhost:5000/api/TestDebug HTTP/1.1\nConnection: keep-alive\nAccept: */*\nAccept-Encoding: gzip, deflate, br\nHost: localhost:5000\nUser-Agent: PostmanRuntime/7.29.2\nPostman-Token: b55c3db9-bcc7-41b6-bf4f-0c93c5e90f6c\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.TestDebug} {EventName=\"HttpRequest\", Endpoint=\"http://localhost:5000/api/TestDebug\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JC:00000004\", RequestPath=\"/api/TestDebug\", SpanId=\"|88045d51-4f1b7db632e7b4c3.\", TraceId=\"88045d51-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JC\"}\n\n```\n\nResponse:\n\n```\n[12:53:50 DBG] HTTP/1.1 200 OK\nDate: Thu, 25 Aug 2022 09:53:50 GMT\nTransfer-Encoding: chunked\nContent-Type: application/json; charset=utf-8\nServer: Kestrel\n {Crip.AspNetCore.Logging.RequestLoggingMiddleware.TestDebug} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=7, Endpoint=\"http://localhost:5000/api/TestDebug\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JC:00000004\", RequestPath=\"/api/TestDebug\", SpanId=\"|88045d51-4f1b7db632e7b4c3.\", TraceId=\"88045d51-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JC\"}\n\n```\n\nAnd trace info:\n\n```\n[12:53:50 INF] GET http://localhost:5000/api/TestDebug at 00:00:00.006 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.TestDebug} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=7, Endpoint=\"http://localhost:5000/api/TestDebug\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JC:00000004\", RequestPath=\"/api/TestDebug\", SpanId=\"|88045d51-4f1b7db632e7b4c3.\", TraceId=\"88045d51-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JC\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/TestInfo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/TestInfo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"TestInfo"
+					]
+				},
+				"description": "StartFragment\n\nShould log request INFO level as settings is set to write only that:\n\n`\"Crip.AspNetCore.Logging.RequestLoggingMiddleware.TestInfo\": \"Information\"`\n\nEndFragment\n\n```\n[12:58:16 INF] GET http://localhost:5000/api/TestInfo at 00:00:00.001 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.TestInfo} {EventName=\"HttpResponse\", StatusCode=200, Elapsed=2, Endpoint=\"http://localhost:5000/api/TestInfo\", HttpMethod=\"GET\", RequestId=\"0HMK6FQ5QH9JE:00000001\", RequestPath=\"/api/TestInfo\", SpanId=\"|88045d52-4f1b7db632e7b4c3.\", TraceId=\"88045d52-4f1b7db632e7b4c3\", ParentId=\"\", ConnectionId=\"0HMK6FQ5QH9JE\"}\n\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "postman-echo.com",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-custom",
+						"value": "custom header value",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bar1\": \"bazz1\",\r\n    \"bar2\": \"bazz2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://postman-echo.com/post?foo1=bar1&foo2=bar2",
+					"protocol": "http",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"post"
+					],
+					"query": [
+						{
+							"key": "foo1",
+							"value": "bar1"
+						},
+						{
+							"key": "foo2",
+							"value": "bar2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
