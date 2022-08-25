@@ -19,8 +19,8 @@ jobs:
     env:
       BUILD_CONFIG: Release
       SOLUTION: Crip.AspNetCore.Logging.sln
-      TESTS: Crip.AspNetCore.Logging.Tests/Crip.AspNetCore.Logging.Tests.csproj
-      LIBRARY: Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj
+      TESTS: tests/Crip.AspNetCore.Logging.Tests/Crip.AspNetCore.Logging.Tests.csproj
+      LIBRARY: src/Crip.AspNetCore.Logging/Crip.AspNetCore.Logging.csproj
 
     runs-on: ubuntu-latest
     needs: init

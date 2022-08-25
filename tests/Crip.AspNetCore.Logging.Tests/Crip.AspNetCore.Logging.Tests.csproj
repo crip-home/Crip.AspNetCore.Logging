@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Crip.Extensions.Tests" Version="1.0.0" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.8" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
@@ -27,8 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj" />
-      <ProjectReference Include="..\Crip.AspNetCore.Tests\Crip.AspNetCore.Tests.csproj" />
+      <ProjectReference Include="..\..\src\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj" />
     </ItemGroup>
 
 </Project>
