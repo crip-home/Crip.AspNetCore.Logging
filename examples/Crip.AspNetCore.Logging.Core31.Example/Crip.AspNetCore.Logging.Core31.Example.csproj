@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj"/>
+    <ProjectReference Include="..\..\src\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj"/>
   </ItemGroup>
 
 </Project>

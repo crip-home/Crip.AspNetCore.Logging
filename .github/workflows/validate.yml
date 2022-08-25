@@ -19,7 +19,7 @@ jobs:
 
   build:
     env:
-      TESTS: Crip.AspNetCore.Logging.Tests/Crip.AspNetCore.Logging.Tests.csproj
+      TESTS: tests/Crip.AspNetCore.Logging.Tests/Crip.AspNetCore.Logging.Tests.csproj
 
     runs-on: ubuntu-latest
     needs: init

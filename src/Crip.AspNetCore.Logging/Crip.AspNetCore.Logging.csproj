@@ -28,8 +28,8 @@
 
   <ItemGroup>
     <None Remove="$(AssemblyName).xml" />
-    <None Include="../README.MD" Pack="true" PackagePath="\" />
-    <None Include="../LICENSE" Pack="true" PackagePath="\" />
+    <None Include="../../README.MD" Pack="true" PackagePath="\" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

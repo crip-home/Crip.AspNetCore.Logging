@@ -37,5 +37,5 @@ msbuild.wrn
 .vs/
 
 # Project specific ignore files
-/Crip.AspNetCore.*/Crip.AspNetCore.*.xml
-/Crip.AspNetCore.*/**/*.log
+/**/Crip.AspNetCore.*/Crip.AspNetCore.*.xml
+/**/Crip.AspNetCore.*/**/*.log
