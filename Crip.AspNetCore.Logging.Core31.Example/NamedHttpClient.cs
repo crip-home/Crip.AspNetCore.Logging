@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Crip.AspNetCore.Logging.Example.Web
+namespace Crip.AspNetCore.Logging.Core31.Example
 {
     public class NamedHttpClient
     {

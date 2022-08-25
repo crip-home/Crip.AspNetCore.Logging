@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Crip.AspNetCore.Logging.Example.Web
+namespace Crip.AspNetCore.Logging.Core31.Example
 {
     public class Startup
     {
@@ -24,6 +24,9 @@ namespace Crip.AspNetCore.Logging.Example.Web
                 // Do not log if request path matches provided pattern.
                 .AddRequestLoggingExclude("/api/test/silent-start*", "/api/test/silent");
 
+            // Register HTTP client and write all request logs
+            // As an alternative, could be used handler `.AddHttpMessageHandler<LoggingHandler<NamedHttpClient>>()`
+            // but in such case make sure you register `.AddRequestLoggingHandler()` in DI.
             services.AddLoggableHttpClient<NamedHttpClient>(client =>
             {
                 client.BaseAddress = new Uri("http://postman-echo.com/");
@@ -59,7 +62,7 @@ namespace Crip.AspNetCore.Logging.Example.Web
                         context.Response.StatusCode = 500;
                         context.Response.ContentType = "text/html";
 
-                        await context.Response.WriteAsync("<html lang=\"en\"><body>\r\nERROR!<br><br>\r\n</body></html>\r\n");
+                        await context.Response.WriteAsync("<html lang=\"en\"><body>\r\nSystem ERROR!<br><br>\r\n</body></html>\r\n");
                         await context.Response.WriteAsync(new string(' ', 100));
                     });
                 });

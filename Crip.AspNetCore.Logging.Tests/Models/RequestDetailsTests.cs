@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Primitives;
 using Xunit;
-using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace Crip.AspNetCore.Logging.Tests
 {
@@ -17,12 +15,12 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             HttpRequest request = new FakeHttpContextBuilder()
-                .SetMethod(HttpMethod.Put)
-                .SetScheme(HttpScheme.Http)
+                .SetMethod(new HttpMethod("PUT"))
+                .SetScheme("http")
                 .SetPathBase("/api")
                 .SetPath("/v1")
                 .SetQuery(new() { { "cat", "1" } })
-                .SetHost(new("localhost"))
+                .SetHost("localhost")
                 .Create()
                 .Request;
 
@@ -50,9 +48,9 @@ namespace Crip.AspNetCore.Logging.Tests
             // Arrange
             HttpRequest request = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Post)
-                .SetScheme(HttpScheme.Https)
+                .SetScheme("https")
                 .SetPath("/api/v2")
-                .SetHost(new("example.com"))
+                .SetHost("example.com")
                 .Create()
                 .Request;
 
@@ -79,7 +77,7 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             Uri uri = new("http://localhost/api/v1?cat=1");
-            HttpRequestMessage request = new(System.Net.Http.HttpMethod.Put, uri);
+            HttpRequestMessage request = new(HttpMethod.Put, uri);
 
             // Act
             var result = RequestDetails.From(request);

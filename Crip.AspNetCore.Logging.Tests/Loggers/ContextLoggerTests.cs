@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -20,7 +14,7 @@ namespace Crip.AspNetCore.Logging.Tests
             Mock<IHttpLoggerFactory> httpLoggerFactoryMock = new();
             HttpContext context = new FakeHttpContextBuilder().SetEndpoint("Name").Create();
 
-            ContextLogger<RequestLoggingMiddleware> sut = new(
+            var _ = new ContextLogger<RequestLoggingMiddleware>(
                 loggerFactoryMock.Object,
                 httpLoggerFactoryMock.Object,
                 context);

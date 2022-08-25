@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -19,10 +19,10 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             var (httpLogger, _, loggerMock, requestLoggerMock, _, _) = Mock();
-            HttpContext context = new FakeHttpContextBuilder()
+            var context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Head)
-                .SetScheme(HttpScheme.Https)
-                .SetHost(new("example.com"))
+                .SetScheme("https")
+                .SetHost("example.com")
                 .Create();
 
             var request = RequestDetails.From(context.Request);
@@ -53,8 +53,8 @@ namespace Crip.AspNetCore.Logging.Tests
             var (httpLogger, _, loggerMock, requestLoggerMock, _, _) = Mock(predicate: predicate);
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Head)
-                .SetScheme(HttpScheme.Https)
-                .SetHost(new("example.com"))
+                .SetScheme("https")
+                .SetHost("example.com")
                 .SetPathBase("/master/api/v1")
                 .Create();
 
@@ -80,8 +80,8 @@ namespace Crip.AspNetCore.Logging.Tests
             var (httpLogger, stopwatch, loggerMock, _, responseLoggerMock, _) = Mock(15000d);
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Post)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetStatus(HttpStatusCode.Conflict)
                 .Create();
 
@@ -123,8 +123,8 @@ namespace Crip.AspNetCore.Logging.Tests
             var (httpLogger, stopwatch, loggerMock, _, responseLoggerMock, _) = Mock(15000d, predicate);
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Post)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetPathBase("/master/api/v1")
                 .SetStatus(HttpStatusCode.Conflict)
                 .Create();
@@ -152,8 +152,8 @@ namespace Crip.AspNetCore.Logging.Tests
             var (httpLogger, stopwatch, loggerMock, _, _, basicInfoLoggerMock) = Mock(123);
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Get)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetStatus(HttpStatusCode.Ambiguous)
                 .Create();
 
@@ -195,8 +195,8 @@ namespace Crip.AspNetCore.Logging.Tests
             var (httpLogger, stopwatch, loggerMock, _, _, basicInfoLoggerMock) = Mock(123, predicate);
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Get)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetPathBase("/master/api/v1")
                 .SetStatus(HttpStatusCode.Ambiguous)
                 .Create();
@@ -225,8 +225,8 @@ namespace Crip.AspNetCore.Logging.Tests
             Mock<Exception> exceptionMock = new();
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Get)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetStatus(HttpStatusCode.Forbidden)
                 .Create();
 
@@ -264,8 +264,8 @@ namespace Crip.AspNetCore.Logging.Tests
             Mock<Exception> exceptionMock = new();
             HttpContext context = new FakeHttpContextBuilder()
                 .SetMethod(HttpMethod.Get)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("example.com"))
+                .SetScheme("http")
+                .SetHost("example.com")
                 .SetStatus(HttpStatusCode.InternalServerError)
                 .Create();
 

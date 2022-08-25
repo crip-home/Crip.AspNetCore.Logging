@@ -4,58 +4,57 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace Crip.AspNetCore.Logging
+namespace Crip.AspNetCore.Logging;
+
+/// <summary>
+/// HTTP request logger implementation.
+/// </summary>
+public class RequestLogger : ContentLogger, IRequestLogger
 {
     /// <summary>
-    /// HTTP request logger implementation.
+    /// Initializes a new instance of the <see cref="RequestLogger"/> class.
     /// </summary>
-    public class RequestLogger : ContentLogger, IRequestLogger
+    /// <param name="contentFactory">Request content value factory.</param>
+    /// <param name="headerFactory">Request header value factory.</param>
+    public RequestLogger(
+        LogContentFactory contentFactory,
+        LogHeaderFactory headerFactory)
+        : base(headerFactory, contentFactory)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RequestLogger"/> class.
-        /// </summary>
-        /// <param name="contentFactory">Request content value factory.</param>
-        /// <param name="headerFactory">Request header value factory.</param>
-        public RequestLogger(
-            LogContentFactory contentFactory,
-            LogHeaderFactory headerFactory)
-            : base(headerFactory, contentFactory)
+    }
+
+    /// <inheritdoc cref="IRequestLogger"/>
+    public async Task LogRequest(ILogger logger, RequestDetails request)
+    {
+        var level = logger.GetLogLevel();
+        if (level > LogLevel.Debug)
         {
+            return;
         }
 
-        /// <inheritdoc cref="IRequestLogger"/>
-        public async Task LogRequest(ILogger logger, RequestDetails request)
+        StringBuilder text = RequestHead(request);
+
+        if (level <= LogLevel.Trace)
         {
-            var level = logger.GetLogLevel();
-            if (level > LogLevel.Debug)
-            {
-                return;
-            }
-
-            StringBuilder text = RequestHead(request);
-
-            if (level <= LogLevel.Trace)
-            {
-                // Write whole request body only when Trace log level is enabled.
-                text.AppendLine(await ReadBody(request));
-            }
-
-            logger.Log(level, text.ToString());
+            // Write whole request body only when Trace log level is enabled.
+            text.AppendLine(await ReadBody(request));
         }
 
-        private StringBuilder RequestHead(RequestDetails request)
-        {
-            var text = $"{request.Method} {request.Url} {request.Protocol}{NewLine}";
+        logger.Log(level, text.ToString());
+    }
 
-            StringBuilder builder = new(text);
-            AppendHeaders(builder, request.Headers);
+    private StringBuilder RequestHead(RequestDetails request)
+    {
+        var text = $"{request.Method} {request.Url} {request.Protocol}{NewLine}";
 
-            return builder;
-        }
+        StringBuilder builder = new(text);
+        AppendHeaders(builder, request.Headers);
 
-        private Task<string> ReadBody(RequestDetails request)
-        {
-            return ReadContent(request.ContentType, request.Content);
-        }
+        return builder;
+    }
+
+    private Task<string> ReadBody(RequestDetails request)
+    {
+        return ReadContent(request.ContentType, request.Content);
     }
 }

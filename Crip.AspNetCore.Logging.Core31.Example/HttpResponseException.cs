@@ -1,8 +1,8 @@
 using System;
 
-namespace Crip.AspNetCore.Logging.Example.Web
+namespace Crip.AspNetCore.Logging.Core31.Example
 {
-    public class HttpResponseException : Exception
+    public class HttpResponseException : ApplicationException
     {
         public int Status { get; set; } = 500;
 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -25,8 +25,8 @@ namespace Crip.AspNetCore.Logging.Tests
         private HttpContext Context =>
             new FakeHttpContextBuilder("HTTP/1.1")
                 .SetMethod(HttpMethod.Get)
-                .SetScheme(HttpScheme.Http)
-                .SetHost(new("localhost"))
+                .SetScheme("http")
+                .SetHost("localhost")
                 .SetPathBase("/master")
                 .SetPath("/slave")
                 .SetRequestHeaders(new()
@@ -43,9 +43,9 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Information);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
-            ILoggerFactory factory = provider.GetService<ILoggerFactory>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
+            ILoggerFactory factory = provider.GetRequiredService<ILoggerFactory>();
             ILogger<RequestLoggingMiddleware> logger = factory.CreateLogger<RequestLoggingMiddleware>();
 
             logger.IsEnabled(LogLevel.Error).Should().BeTrue();
@@ -72,7 +72,7 @@ namespace Crip.AspNetCore.Logging.Tests
             List<string> actual = TestCorrelator.GetLogEventsFromCurrentContext().Select(FormatLogEvent).ToList();
             actual.Should().BeEquivalentTo(
                 "Information: Before { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware\" }",
-                "Information: GET http://localhost/master/slave at 00:00:00:100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }",
+                "Information: GET http://localhost/master/slave at 00:00:00.100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }",
                 "Information: After { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware\" }");
         }
 
@@ -81,8 +81,8 @@ namespace Crip.AspNetCore.Logging.Tests
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Debug);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 async ctx =>
                 {
@@ -108,7 +108,7 @@ Foo: bar, baz
                 @"Debug: HTTP/1.1 200 OK
 Foo: Bar
  { SourceContext: ""Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake"", EventName: ""HttpResponse"", StatusCode: 200, Elapsed: 100, Endpoint: ""http://localhost/master/slave"", HttpMethod: ""GET"" }",
-                "Information: GET http://localhost/master/slave at 00:00:00:100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }"
+                "Information: GET http://localhost/master/slave at 00:00:00.100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }"
             );
         }
 
@@ -117,8 +117,8 @@ Foo: Bar
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Verbose);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 async ctx =>
                 {
@@ -148,7 +148,7 @@ Foo: Bar
 
 Response body
  { SourceContext: ""Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake"", EventName: ""HttpResponse"", StatusCode: 200, Elapsed: 100, Endpoint: ""http://localhost/master/slave"", HttpMethod: ""GET"" }",
-                "Information: GET http://localhost/master/slave at 00:00:00:100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }"
+                "Information: GET http://localhost/master/slave at 00:00:00.100 with 200 OK { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 200, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }"
             );
         }
 
@@ -157,8 +157,8 @@ Response body
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Information);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 ctx =>
                 {
@@ -177,7 +177,7 @@ Response body
             List<string> actual = TestCorrelator.GetLogEventsFromCurrentContext().Select(FormatLogEvent).ToList();
             actual.Should().BeEquivalentTo(
                 "Error: Error during HTTP request processing { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 500, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }",
-                "Information: GET http://localhost/master/slave at 00:00:00:100 with 500 InternalServerError { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 500, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }"
+                "Information: GET http://localhost/master/slave at 00:00:00.100 with 500 InternalServerError { SourceContext: \"Crip.AspNetCore.Logging.RequestLoggingMiddleware.Fake\", EventName: \"HttpResponse\", StatusCode: 500, Elapsed: 100, Endpoint: \"http://localhost/master/slave\", HttpMethod: \"GET\" }"
             );
         }
 
@@ -186,8 +186,8 @@ Response body
         {
             // Arrange
             IServiceProvider provider = ServiceProvider(LogEventLevel.Fatal);
-            IContextLoggerFactory contextLoggerFactory = provider.GetService<IContextLoggerFactory>();
-            IMeasurable measurable = provider.GetService<IMeasurable>();
+            IContextLoggerFactory contextLoggerFactory = provider.GetRequiredService<IContextLoggerFactory>();
+            IMeasurable measurable = provider.GetRequiredService<IMeasurable>();
             RequestLoggingMiddleware handler = new(
                 async ctx => await ctx.Response.WriteAsync("Response body"),
                 contextLoggerFactory,
@@ -202,24 +202,20 @@ Response body
             actual.Should().BeEmpty();
         }
 
-        private static IContextLoggerFactory SetupFactory(LogEventLevel logLevel)
-        {
-            return ServiceProvider(logLevel).GetService<IContextLoggerFactory>();
-        }
+        private static IContextLoggerFactory SetupFactory(LogEventLevel logLevel) =>
+            ServiceProvider(logLevel).GetRequiredService<IContextLoggerFactory>();
 
-        private static IServiceProvider ServiceProvider(LogEventLevel logLevel)
-        {
-            return new ServiceCollection()
-                .AddSingleton<ILoggerFactory>(i => CreateSerilogLoggerFactory(logLevel))
-                .AddSingleton<IRequestLogger>(i => new RequestLogger(new(null), new(null)))
-                .AddSingleton<IResponseLogger>(i => new ResponseLogger(new(null), new(null)))
+        private static IServiceProvider ServiceProvider(LogEventLevel logLevel) =>
+            new ServiceCollection()
+                .AddSingleton<ILoggerFactory>(_ => CreateSerilogLoggerFactory(logLevel))
+                .AddSingleton<IRequestLogger>(_ => new RequestLogger(new(null), new(null)))
+                .AddSingleton<IResponseLogger>(_ => new ResponseLogger(new(null), new(null)))
                 .AddSingleton<IBasicInfoLogger, BasicInfoLogger>()
                 .AddSingleton<IHttpLoggerFactory, HttpLoggerFactory>()
                 .AddSingleton<IContextLoggerFactory, ContextLoggerFactory>()
                 .AddSingleton<IMeasurable, TimeMeasurable>()
-                .AddSingleton<IStopwatch>(i => new MockStopwatch(TimeSpan.FromSeconds(0.1)))
+                .AddSingleton<IStopwatch>(_ => new MockStopwatch(TimeSpan.FromSeconds(0.1)))
                 .BuildServiceProvider();
-        }
 
         private static SerilogLoggerFactory CreateSerilogLoggerFactory(LogEventLevel logLevel)
         {

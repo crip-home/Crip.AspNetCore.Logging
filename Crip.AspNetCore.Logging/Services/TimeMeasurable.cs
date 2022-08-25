@@ -1,52 +1,51 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Crip.AspNetCore.Logging
+namespace Crip.AspNetCore.Logging;
+
+/// <summary>
+/// Time measurement service.
+/// </summary>
+public class TimeMeasurable : IMeasurable
 {
+    private readonly IServiceProvider _services;
+    private readonly IStopwatch? _stopwatch;
+
     /// <summary>
-    /// Time measurement service.
+    /// Initializes a new instance of the <see cref="TimeMeasurable"/> class.
     /// </summary>
-    public class TimeMeasurable : IMeasurable
+    /// <param name="services">The DI service provider.</param>
+    public TimeMeasurable(IServiceProvider services)
     {
-        private readonly IServiceProvider _services;
-        private readonly IStopwatch? _stopwatch;
+        _services = services;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TimeMeasurable"/> class.
-        /// </summary>
-        /// <param name="services">The DI service provider.</param>
-        public TimeMeasurable(IServiceProvider services)
+    private TimeMeasurable(IServiceProvider services, IStopwatch stopwatch)
+    {
+        _services = services;
+        _stopwatch = stopwatch;
+        _stopwatch.Start();
+    }
+
+    /// <inheritdoc />
+    public IMeasurable StartMeasure()
+    {
+        var stopwatch = _services.GetRequiredService<IStopwatch>();
+        return new TimeMeasurable(_services, stopwatch);
+    }
+
+    /// <inheritdoc />
+    public IStopwatch StopMeasure()
+    {
+        if (_stopwatch is null)
         {
-            _services = services;
+            throw new ArgumentNullException(
+                nameof(_stopwatch),
+                "Could not stop not started time measurement.");
         }
 
-        private TimeMeasurable(IServiceProvider services, IStopwatch stopwatch)
-        {
-            _services = services;
-            _stopwatch = stopwatch;
-            _stopwatch.Start();
-        }
+        _stopwatch.Stop();
 
-        /// <inheritdoc />
-        public IMeasurable StartMeasure()
-        {
-            var stopwatch = _services.GetService<IStopwatch>() ?? throw new ArgumentNullException(nameof(IStopwatch));
-            return new TimeMeasurable(_services, stopwatch);
-        }
-
-        /// <inheritdoc />
-        public IStopwatch StopMeasure()
-        {
-            if (_stopwatch is null)
-            {
-                throw new ArgumentNullException(
-                    nameof(_stopwatch),
-                    "Could not stop not started time measurement.");
-            }
-
-            _stopwatch.Stop();
-
-            return _stopwatch;
-        }
+        return _stopwatch;
     }
 }

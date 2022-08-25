@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Tests", "Cr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{06B1752D-5385-48B9-BF69-41DFDD43E6C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.Example.Web", "Crip.AspNetCore.Logging.Example.Web\Crip.AspNetCore.Logging.Example.Web.csproj", "{13AC8BF3-59E3-4D23-A660-8BBC44258A95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.Core31.Example", "Crip.AspNetCore.Logging.Core31.Example\Crip.AspNetCore.Logging.Core31.Example.csproj", "{13AC8BF3-59E3-4D23-A660-8BBC44258A95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
