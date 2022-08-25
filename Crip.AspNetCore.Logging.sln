@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.Tests", "tests\Crip.AspNetCore.Logging.Tests\Crip.AspNetCore.Logging.Tests.csproj", "{F1AA9014-B78F-421A-88C8-CDBBE4F47B44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.Core60.Example", "examples\Crip.AspNetCore.Logging.Core60.Example\Crip.AspNetCore.Logging.Core60.Example.csproj", "{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{F1AA9014-B78F-421A-88C8-CDBBE4F47B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1AA9014-B78F-421A-88C8-CDBBE4F47B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1AA9014-B78F-421A-88C8-CDBBE4F47B44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0B96A967-74F1-4594-9050-68FDF7CE7842} = {06B1752D-5385-48B9-BF69-41DFDD43E6C9}
 		{F1AA9014-B78F-421A-88C8-CDBBE4F47B44} = {00E0B9FD-547F-4BDA-B256-686EB3F72980}
+		{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A} = {06B1752D-5385-48B9-BF69-41DFDD43E6C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4238F09D-9390-4968-9F7E-91CB3EF992DA}
