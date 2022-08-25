@@ -1,16 +1,15 @@
-﻿namespace Crip.AspNetCore.Logging
+﻿namespace Crip.AspNetCore.Logging;
+
+/// <summary>
+/// Stopwatch extension methods.
+/// </summary>
+internal static class StopwatchExtensions
 {
     /// <summary>
-    /// Stopwatch extension methods.
+    /// Get user friendly time representation from stopwatch.
     /// </summary>
-    internal static class StopwatchExtensions
-    {
-        /// <summary>
-        /// Get user friendly time representation from stopwatch.
-        /// </summary>
-        /// <param name="stopwatch">The stopwatch state.</param>
-        /// <returns>User friendly time representation.</returns>
-        public static string Time(this IStopwatch stopwatch) =>
-            stopwatch.Elapsed.ToString(@"hh\:mm\:ss\.fff");
-    }
+    /// <param name="stopwatch">The stopwatch state.</param>
+    /// <returns>User friendly time representation.</returns>
+    public static string Time(this IStopwatch stopwatch) =>
+        stopwatch.Elapsed.ToString(@"hh\:mm\:ss\.fff");
 }

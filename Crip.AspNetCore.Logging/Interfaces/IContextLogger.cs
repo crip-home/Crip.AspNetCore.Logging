@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Crip.AspNetCore.Logging
+namespace Crip.AspNetCore.Logging;
+
+/// <summary>
+/// HTTP context logger contract.
+/// </summary>
+public interface IContextLogger : IClientLogger
 {
     /// <summary>
-    /// HTTP context logger contract.
+    /// Gets current logger level.
     /// </summary>
-    public interface IContextLogger : IClientLogger
-    {
-        /// <summary>
-        /// Gets current logger level.
-        /// </summary>
-        LogLevel LogLevel { get; }
-    }
+    LogLevel LogLevel { get; }
 }

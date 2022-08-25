@@ -2,29 +2,28 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Crip.AspNetCore.Logging
+namespace Crip.AspNetCore.Logging;
+
+/// <summary>
+/// HTTP context logger factory.
+/// </summary>
+public class ContextLoggerFactory : Factory, IContextLoggerFactory
 {
     /// <summary>
-    /// HTTP context logger factory.
+    /// Initializes a new instance of the <see cref="ContextLoggerFactory"/> class.
     /// </summary>
-    public class ContextLoggerFactory : Factory, IContextLoggerFactory
+    /// <param name="services">The service provider instance.</param>
+    public ContextLoggerFactory(IServiceProvider services)
+        : base(services)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContextLoggerFactory"/> class.
-        /// </summary>
-        /// <param name="services">The service provider instance.</param>
-        public ContextLoggerFactory(IServiceProvider services)
-            : base(services)
-        {
-        }
+    }
 
-        /// <inheritdoc cref="IContextLoggerFactory"/>
-        public IContextLogger Create<T>(HttpContext context)
-        {
-            return new ContextLogger<T>(
-                GetService<ILoggerFactory>(),
-                GetService<IHttpLoggerFactory>(),
-                context);
-        }
+    /// <inheritdoc cref="IContextLoggerFactory"/>
+    public IContextLogger Create<T>(HttpContext context)
+    {
+        return new ContextLogger<T>(
+            GetService<ILoggerFactory>(),
+            GetService<IHttpLoggerFactory>(),
+            context);
     }
 }

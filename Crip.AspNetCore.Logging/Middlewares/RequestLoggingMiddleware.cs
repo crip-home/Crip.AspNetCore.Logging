@@ -4,89 +4,88 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Crip.AspNetCore.Logging
+namespace Crip.AspNetCore.Logging;
+
+/// <summary>
+/// HTTP request logging middleware.
+/// </summary>
+public class RequestLoggingMiddleware
 {
+    private readonly RequestDelegate _next;
+    private readonly IContextLoggerFactory _contextLoggerFactory;
+    private readonly IMeasurable _measurable;
+
     /// <summary>
-    /// HTTP request logging middleware.
+    /// Initializes a new instance of the <see cref="RequestLoggingMiddleware"/> class.
     /// </summary>
-    public class RequestLoggingMiddleware
+    /// <param name="next">The next request delegate.</param>
+    /// <param name="contextLoggerFactory">HTTP context logger factory service.</param>
+    /// <param name="measurable">The time measure service.</param>
+    public RequestLoggingMiddleware(
+        RequestDelegate next,
+        IContextLoggerFactory contextLoggerFactory,
+        IMeasurable measurable)
     {
-        private readonly RequestDelegate _next;
-        private readonly IContextLoggerFactory _contextLoggerFactory;
-        private readonly IMeasurable _measurable;
+        _next = next ?? throw new ArgumentNullException(nameof(next));
+        _contextLoggerFactory = contextLoggerFactory ?? throw new ArgumentNullException(nameof(contextLoggerFactory));
+        _measurable = measurable ?? throw new ArgumentNullException(nameof(measurable));
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RequestLoggingMiddleware"/> class.
-        /// </summary>
-        /// <param name="next">The next request delegate.</param>
-        /// <param name="contextLoggerFactory">HTTP context logger factory service.</param>
-        /// <param name="measurable">The time measure service.</param>
-        public RequestLoggingMiddleware(
-            RequestDelegate next,
-            IContextLoggerFactory contextLoggerFactory,
-            IMeasurable measurable)
+    /// <summary>
+    /// <list type="bullet">
+    ///   <item>
+    ///     <term>Information</term>
+    ///     <description>Single entry per request/response with status and execution time.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term>Debug</term>
+    ///     <description>Request/response logged separate entries with headers.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term>Verbose</term>
+    ///     <description>Request/response logged separate entries with headers and body.</description>
+    ///   </item>
+    /// </list>
+    /// </summary>
+    /// <param name="context">HTTP execution context.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task Invoke(HttpContext context)
+    {
+        var logger = _contextLoggerFactory.Create<RequestLoggingMiddleware>(context);
+        var measure = _measurable.StartMeasure();
+        Stream originalBody = context.Response.Body;
+        Stream responseBody = new MemoryStream();
+
+        try
         {
-            _next = next ?? throw new ArgumentNullException(nameof(next));
-            _contextLoggerFactory = contextLoggerFactory ?? throw new ArgumentNullException(nameof(contextLoggerFactory));
-            _measurable = measurable ?? throw new ArgumentNullException(nameof(measurable));
+            context.Request.EnableBuffering();
+            await logger.LogRequest();
+
+            if (logger.LogLevel <= LogLevel.Trace)
+            {
+                context.Response.Body = responseBody;
+            }
+
+            await _next(context);
+            var stopwatch = measure.StopMeasure();
+
+            await logger.LogResponse(stopwatch);
         }
-
-        /// <summary>
-        /// <list type="bullet">
-        ///   <item>
-        ///     <term>Information</term>
-        ///     <description>Single entry per request/response with status and execution time.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>Debug</term>
-        ///     <description>Request/response logged separate entries with headers.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>Verbose</term>
-        ///     <description>Request/response logged separate entries with headers and body.</description>
-        ///   </item>
-        /// </list>
-        /// </summary>
-        /// <param name="context">HTTP execution context.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Invoke(HttpContext context)
+        catch (Exception exception)
         {
-            var logger = _contextLoggerFactory.Create<RequestLoggingMiddleware>(context);
-            var measure = _measurable.StartMeasure();
-            Stream originalBody = context.Response.Body;
-            Stream responseBody = new MemoryStream();
+            var stopwatch = measure.StopMeasure();
+            logger.LogError(exception, stopwatch);
 
-            try
+            throw;
+        }
+        finally
+        {
+            var stopwatch = measure.StopMeasure();
+            logger.LogInfo(stopwatch).Wait();
+            if (logger.LogLevel <= LogLevel.Trace)
             {
-                context.Request.EnableBuffering();
-                await logger.LogRequest();
-
-                if (logger.LogLevel <= LogLevel.Trace)
-                {
-                    context.Response.Body = responseBody;
-                }
-
-                await _next(context);
-                var stopwatch = measure.StopMeasure();
-
-                await logger.LogResponse(stopwatch);
-            }
-            catch (Exception exception)
-            {
-                var stopwatch = measure.StopMeasure();
-                logger.LogError(exception, stopwatch);
-
-                throw;
-            }
-            finally
-            {
-                var stopwatch = measure.StopMeasure();
-                logger.LogInfo(stopwatch).Wait();
-                if (logger.LogLevel <= LogLevel.Trace)
-                {
-                    await responseBody.CopyToAsync(originalBody);
-                    context.Response.Body = originalBody;
-                }
+                await responseBody.CopyToAsync(originalBody);
+                context.Response.Body = originalBody;
             }
         }
     }

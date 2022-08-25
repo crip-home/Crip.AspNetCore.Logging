@@ -10,85 +10,84 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
-namespace Crip.AspNetCore.Logging
+namespace Crip.AspNetCore.Logging;
+
+public class ResponseDetails
 {
-    public class ResponseDetails
+    public ResponseDetails()
     {
-        public ResponseDetails()
+    }
+
+    private ResponseDetails(IStopwatch? stopwatch)
+    {
+        Stopwatch = stopwatch;
+        Time = stopwatch?.Time() ?? string.Empty;
+    }
+
+    private ResponseDetails(HttpResponse? response, IStopwatch? stopwatch, int? statusCode)
+        : this(stopwatch)
+    {
+        if (response is null)
         {
+            return;
         }
 
-        private ResponseDetails(IStopwatch? stopwatch)
+        StatusCode = (HttpStatusCode)(statusCode ?? response.StatusCode);
+        ContentType = response.ContentType;
+        Headers = response.Headers;
+        Content = response.Body;
+    }
+
+    private ResponseDetails(HttpResponseMessage? response, IStopwatch? stopwatch, int? statusCode)
+        : this(stopwatch)
+    {
+        if (response is null)
         {
-            Stopwatch = stopwatch;
-            Time = stopwatch?.Time() ?? string.Empty;
+            return;
         }
 
-        private ResponseDetails(HttpResponse? response, IStopwatch? stopwatch, int? statusCode)
-            : this(stopwatch)
-        {
-            if (response is null)
-            {
-                return;
-            }
+        StatusCode = (HttpStatusCode)(statusCode ?? (int)response.StatusCode);
+        ContentType = response.Content?.Headers.ContentType?.ToString();
+        Headers = ToDictionary(response.Headers);
+        Content = Read(response.Content);
+    }
 
-            StatusCode = (HttpStatusCode)(statusCode ?? response.StatusCode);
-            ContentType = response.ContentType;
-            Headers = response.Headers;
-            Content = response.Body;
+    public IStopwatch? Stopwatch { get; init; }
+
+    public string? Time { get; init; }
+
+    public HttpStatusCode? StatusCode { get; init; }
+
+    public string? ContentType { get; init; }
+
+    public IDictionary<string, StringValues>? Headers { get; init; }
+
+    public Stream? Content { get; init; }
+
+    public static ResponseDetails From(HttpResponseMessage? response, IStopwatch? stopwatch, int? statusCode = null) =>
+        response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch, statusCode);
+
+    public static ResponseDetails From(HttpResponse? response, IStopwatch? stopwatch, int? statusCode = null) =>
+        response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch, statusCode);
+
+    private static Stream? Read(HttpContent? content)
+    {
+        if (content is null)
+        {
+            return null;
         }
 
-        private ResponseDetails(HttpResponseMessage? response, IStopwatch? stopwatch, int? statusCode)
-            : this(stopwatch)
-        {
-            if (response is null)
-            {
-                return;
-            }
+        // Do not use steam read as it does not uses buffering.
+        var readTask = content.ReadAsByteArrayAsync();
+        var bytes = readTask.GetAwaiter().GetResult();
 
-            StatusCode = (HttpStatusCode)(statusCode ?? (int)response.StatusCode);
-            ContentType = response.Content?.Headers.ContentType?.ToString();
-            Headers = ToDictionary(response.Headers);
-            Content = Read(response.Content);
-        }
+        return new MemoryStream(bytes);
+    }
 
-        public IStopwatch? Stopwatch { get; init; }
-
-        public string? Time { get; init; }
-
-        public HttpStatusCode? StatusCode { get; init; }
-
-        public string? ContentType { get; init; }
-
-        public IDictionary<string, StringValues>? Headers { get; init; }
-
-        public Stream? Content { get; init; }
-
-        public static ResponseDetails From(HttpResponseMessage? response, IStopwatch? stopwatch, int? statusCode = null) =>
-            response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch, statusCode);
-
-        public static ResponseDetails From(HttpResponse? response, IStopwatch? stopwatch, int? statusCode = null) =>
-            response is null ? new ResponseDetails(stopwatch) : new ResponseDetails(response, stopwatch, statusCode);
-
-        private static Stream? Read(HttpContent? content)
-        {
-            if (content is null)
-            {
-                return null;
-            }
-
-            // Do not use steam read as it does not uses buffering.
-            var readTask = content.ReadAsByteArrayAsync();
-            var bytes = readTask.GetAwaiter().GetResult();
-
-            return new MemoryStream(bytes);
-        }
-
-        private static Dictionary<string, StringValues> ToDictionary(HttpResponseHeaders response)
-        {
-            return response.ToDictionary(
-                header => header.Key,
-                header => new StringValues(header.Value.ToArray()));
-        }
+    private static Dictionary<string, StringValues> ToDictionary(HttpResponseHeaders response)
+    {
+        return response.ToDictionary(
+            header => header.Key,
+            header => new StringValues(header.Value.ToArray()));
     }
 }
