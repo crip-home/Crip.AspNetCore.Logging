@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using FluentAssertions;
-using Xunit;
+﻿using System.Text;
 
 namespace Crip.AspNetCore.Logging.Tests
 {

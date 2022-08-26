@@ -23,9 +23,7 @@ public abstract class Factory
     /// Get service of type <typeparamref name="T"/> from the <see cref="IServiceProvider"/>.
     /// </summary>
     /// <typeparam name="T">The type of service object to get.</typeparam>
-    /// <returns>A service object of type <typeparamref name="T"/> or null if there is no such service.</returns>
-    protected T GetService<T>()
-    {
-        return _services.GetService<T>() ?? throw new ArgumentNullException(typeof(T).FullName);
-    }
+    /// <returns>A service object of type <typeparamref name="T"/>.</returns>
+    /// <exception cref="System.InvalidOperationException">There is no service of type <typeparamref name="T"/>.</exception>
+    protected T GetService<T>() => _services.GetRequiredService<T>();
 }

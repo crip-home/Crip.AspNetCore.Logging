@@ -22,7 +22,7 @@ namespace Crip.AspNetCore.Logging.Core31.Example
                 // Hide cookie header values in log messages
                 .AddRequestLoggingCookieValueMiddleware()
                 // Do not log if request path matches provided pattern.
-                .AddRequestLoggingExclude("/api/test/silent-start*", "/api/test/silent");
+                .AddRequestLoggingExclude("/api/test/pattern-exclude*", "/api/test/exact-exclude");
 
             // Register HTTP client and write all request logs
             // As an alternative, could be used handler `.AddHttpMessageHandler<LoggingHandler<NamedHttpClient>>()`

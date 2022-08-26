@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
-using Moq;
 
 namespace Crip.AspNetCore.Logging.Tests
 {
@@ -27,12 +23,12 @@ namespace Crip.AspNetCore.Logging.Tests
             _context = context;
         }
 
-        public FakeHttpContextBuilder SetEndpoint(string controllerName)
+        public FakeHttpContextBuilder SetEndpoint(string? controllerName = null, string? actionName = null, string? endpointName = null)
         {
             Mock<IEndpointFeature> endpointFeature = new();
             endpointFeature
                 .SetupGet(endpoint => endpoint.Endpoint)
-                .Returns(CreateEndpoint(controllerName));
+                .Returns(CreateEndpoint(controllerName, actionName, endpointName));
 
             _context.Features.Set(endpointFeature.Object);
 
@@ -138,14 +134,16 @@ namespace Crip.AspNetCore.Logging.Tests
 
         public HttpContext Create() => _context;
 
-        private static Endpoint CreateEndpoint(string controllerName) => new(
+        private static Endpoint CreateEndpoint(string? controllerName, string? actionName, string? endpointName) => new(
             _ => Task.CompletedTask,
-            EndpointMetadata(controllerName),
+            EndpointMetadata(controllerName, actionName, endpointName),
             $"{controllerName}Controller"
         );
 
-        private static EndpointMetadataCollection EndpointMetadata(string name) =>
-            new(new ControllerActionDescriptor { ControllerName = name });
+        private static EndpointMetadataCollection EndpointMetadata(string? name, string? actionName, string? endpointName) => new(
+            new ControllerActionDescriptor { ControllerName = name, ActionName = actionName },
+            new EndpointNameMetadata(endpointName ?? "EndpointName")
+        );
 
         private static void AddRange(IHeaderDictionary target, IDictionary<string, StringValues>? values)
         {

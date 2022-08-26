@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Crip.AspNetCore.Logging.Tests
 {

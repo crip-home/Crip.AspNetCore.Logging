@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using Crip.Extensions.Tests;
-using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Xunit;
 
 namespace Crip.AspNetCore.Logging.Tests
 {

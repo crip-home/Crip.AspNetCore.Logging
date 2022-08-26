@@ -18,7 +18,7 @@ internal static class LoggerFactoryExtensions
     /// <returns>The <see cref="ILogger"/> that was created.</returns>
     public static ILogger ControllerLogger<T>(this ILoggerFactory loggerFactory, HttpContext context)
     {
-        var controllerName = context.ControllerName();
+        var controllerName = context.InvocationName();
         if (controllerName is null)
         {
             return loggerFactory.CreateLogger<T>();

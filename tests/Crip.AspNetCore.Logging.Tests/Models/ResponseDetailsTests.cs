@@ -1,9 +1,3 @@
-using System;
-using System.Net.Http;
-using FluentAssertions;
-using Moq;
-using Xunit;
-
 namespace Crip.AspNetCore.Logging.Tests
 {
     public class ResponseDetailsTests
