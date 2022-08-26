@@ -1,34 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-        <LangVersion>10</LangVersion>
-        <IsPackable>false</IsPackable>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+    <LangVersion>10</LangVersion>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Crip.Extensions.Tests" Version="1.0.0" />
-        <PackageReference Include="FluentAssertions" Version="5.10.3" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.8" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-        <PackageReference Include="Moq" Version="4.15.1" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-        <PackageReference Include="Serilog.Sinks.TestCorrelator" Version="3.2.0" />
-        <PackageReference Include="xunit" Version="2.4.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-        <PackageReference Include="coverlet.collector" Version="1.2.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Crip.Extensions.Tests" Version="1.0.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Moq" Version="4.15.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.TestCorrelator" Version="3.2.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <None Remove="Resources\sis_vehicle_response.json" />
-        <EmbeddedResource Include="Resources\sis_vehicle_response.json" />
-        <None Remove="Resources\sis_vehicle_response_log.json" />
-        <EmbeddedResource Include="Resources\sis_vehicle_response_log.json" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\sis_vehicle_response.json" />
+    <EmbeddedResource Include="Resources\sis_vehicle_response.json" />
+    <None Remove="Resources\sis_vehicle_response_log.json" />
+    <EmbeddedResource Include="Resources\sis_vehicle_response_log.json" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Crip.AspNetCore.Logging\Crip.AspNetCore.Logging.csproj" />
+  </ItemGroup>
 
 </Project>

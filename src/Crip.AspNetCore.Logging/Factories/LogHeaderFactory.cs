@@ -28,5 +28,5 @@ public class LogHeaderFactory
     public string PrepareHeader(KeyValuePair<string, StringValues> header) =>
         _middlewares.Aggregate(
             header.Value.ToString(),
-            (_, middleware) => middleware.Modify(header.Key, header.Value));
+            (value, middleware) => middleware.Modify(header.Key, value));
 }
