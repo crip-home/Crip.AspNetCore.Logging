@@ -43,9 +43,6 @@ jobs:
           echo $BUILD_VERSION
         shell: bash
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.6
-
       - name: 🔨 Setup .NET 3.1 & 6.0
         uses: actions/setup-dotnet@v2
         with:
@@ -55,19 +52,26 @@ jobs:
 
       - name: Restore dependencies
         run: nuget restore $SOLUTION
+        shell: bash
 
       - name: Build
         run: dotnet build $LIBRARY --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
+        shell: bash
 
       - name: Run tests
         run: dotnet test $TESTS /p:Configuration=$BUILD_CONFIG --no-restore --verbosity normal
+        shell: bash
 
       - name: Publish GitHub NuGet
         if: startsWith(github.ref, 'refs/tags/v')
         run: dotnet nuget push **\*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/crip-home/index.json --skip-duplicate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
 
       - name: Publish
         if: startsWith(github.ref, 'refs/tags/v')
-        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+        run: dotnet nuget push **\*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json --skip-duplicate
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        shell: bash
