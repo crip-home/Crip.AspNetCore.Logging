@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+﻿using System.Globalization;
 using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Crip.Extensions.Tests;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -17,7 +10,6 @@ using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.TestCorrelator;
-using Xunit;
 
 namespace Crip.AspNetCore.Logging.Tests.Handlers
 {

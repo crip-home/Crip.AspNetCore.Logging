@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Crip.AspNetCore.Logging.Tests
+﻿namespace Crip.AspNetCore.Logging.Tests
 {
     /// <summary>
     /// IStopwatch interface implementation with fixed value

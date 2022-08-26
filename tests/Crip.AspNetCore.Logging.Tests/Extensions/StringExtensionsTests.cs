@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
-
-namespace Crip.AspNetCore.Logging.Tests
+﻿namespace Crip.AspNetCore.Logging.Tests
 {
     public class StringExtensionsTests
     {

@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Crip.AspNetCore.Logging.Tests
 {

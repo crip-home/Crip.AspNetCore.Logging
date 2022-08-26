@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 
 namespace Crip.AspNetCore.Logging.Tests
 {

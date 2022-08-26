@@ -1,10 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 
 namespace Crip.AspNetCore.Logging.Tests
 {

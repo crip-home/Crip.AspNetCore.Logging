@@ -1,8 +1,4 @@
-﻿using System;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using Xunit;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Crip.AspNetCore.Logging.Tests
 {
