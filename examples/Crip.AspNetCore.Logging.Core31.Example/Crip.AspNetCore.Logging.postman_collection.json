@@ -71,8 +71,24 @@
 		{
 			"name": "/api/test",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "some token value",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "a=Rtgyhjk456y7u8iofghbn5976o8ghiui9n6tg87ohiuyrttfayg og879 goiug 987 9hpRtgyhjk456y7u8iofghbn5976o8ghiui9n6tg87ohiuyrttfayg og879 goiug 987 9hpRtgyhjk456y7u8iofghbn5976o8ghiui9n6tg87ohiuyrttfayg og879 goiug 987 9hpRtgyhjk456y7u8iofghbn5976o8ghiui9n6tg87ohiuyrttfayg og879 goiug 987 9hpRtgyhjk456y7u8iofghbn5976o8ghiui9n6tg87ohiuyrttfayg og879 goiug 987 9hpasd",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://localhost:5000/api/test",
 					"protocol": "http",
