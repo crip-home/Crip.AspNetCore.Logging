@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -12,26 +11,34 @@ namespace Crip.AspNetCore.Logging;
 public static class DependencyInjection
 {
     /// <summary>
-    /// Adds logging DI.
+    /// Adds logging to DI.
     /// </summary>
     /// <param name="services">DI service.</param>
     /// <returns>Updated service collection.</returns>
-    public static IServiceCollection AddRequestLogging(this IServiceCollection services)
-    {
-        return services
+    public static IServiceCollection AddRequestLogging(this IServiceCollection services) =>
+        services.AddRequestLogging(_ => { });
+
+    /// <summary>
+    /// Adds logging to DI and configure options.
+    /// </summary>
+    /// <param name="services">DI service.</param>
+    /// <param name="configureOptions">The options configuration callback.</param>
+    /// <returns>Updated service collection.</returns>
+    public static IServiceCollection AddRequestLogging(this IServiceCollection services, Action<RequestLoggingOptions> configureOptions) =>
+        services
+            .Configure(configureOptions)
             .AddSingleton<IMeasurable, TimeMeasurable>()
+            .AddSingleton<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>()
+            .AddSingleton<LogHeaderFactory>()
+            .AddSingleton<LogContentFactory>()
+            .AddSingleton<IJsonStreamModifier, JsonStreamModifier>()
+            .AddSingleton<IBasicInfoLogger, BasicInfoLogger>()
+            .AddScoped<IContextLoggerFactory, ContextLoggerFactory>()
+            .AddScoped<IRequestLogger, RequestLogger>()
+            .AddScoped<IResponseLogger, ResponseLogger>()
             .AddTransient<IStopwatch, LoggingStopwatch>()
-            .AddTransient<IContextLoggerFactory, ContextLoggerFactory>()
             .AddTransient<IHttpLoggerFactory, HttpLoggerFactory>()
-            .AddTransient<IRequestLogger, RequestLogger>()
-            .AddTransient<IResponseLogger, ResponseLogger>()
-            .AddTransient<IBasicInfoLogger, BasicInfoLogger>()
-            .AddTransient<LogContentFactory>()
-            .AddTransient<IRequestContentLogMiddleware, LongJsonContentMiddleware>()
-            .AddTransient<IJsonStreamModifier, JsonStreamModifier>()
-            .AddTransient<LogHeaderFactory>()
-            .AddTransient<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>();
-    }
+            .AddTransient<IRequestContentLogMiddleware, LongJsonContentMiddleware>();
 
     /// <summary>
     /// Adds endpoint patterns to ignore them from logging handler.

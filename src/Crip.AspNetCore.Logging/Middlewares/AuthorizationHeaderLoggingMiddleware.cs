@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Options;
 
 namespace Crip.AspNetCore.Logging;
 
@@ -10,21 +11,30 @@ namespace Crip.AspNetCore.Logging;
 /// </remarks>
 public class AuthorizationHeaderLoggingMiddleware : IHeaderLogMiddleware
 {
-    private const StringComparison Comparison = StringComparison.Ordinal;
+    private const StringComparison Comparison = StringComparison.InvariantCultureIgnoreCase;
+
+    private readonly IOptions<RequestLoggingOptions> _options;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthorizationHeaderLoggingMiddleware"/> class.
+    /// </summary>
+    /// <param name="options">Authorization header options.</param>
+    public AuthorizationHeaderLoggingMiddleware(IOptions<RequestLoggingOptions> options)
+    {
+        _options = options;
+    }
 
     /// <inheritdoc/>
     public string Modify(string key, string value)
     {
-        switch (key)
+        foreach (var authKey in _options.Value.AuthorizationHeaders.AuthorizationHeaderNames)
         {
-            case "Authorization" when value.StartsWith("Basic ", Comparison):
+            if (key.Equals(authKey, Comparison) && value.StartsWith("Basic ", Comparison))
                 return "Basic *****";
-
-            case "Authorization" when value.StartsWith("Bearer ", Comparison):
+            if (key.Equals(authKey, Comparison) && value.StartsWith("Bearer ", Comparison))
                 return "Bearer *****";
-
-            default:
-                return value;
         }
+
+        return value;
     }
 }

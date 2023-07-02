@@ -84,6 +84,7 @@ public class RequestLoggingMiddleware
             logger.LogInfo(stopwatch).Wait();
             if (logger.LogLevel <= LogLevel.Trace)
             {
+                if (responseBody.CanSeek) responseBody.Seek(0, SeekOrigin.Begin);
                 await responseBody.CopyToAsync(originalBody);
                 context.Response.Body = originalBody;
             }

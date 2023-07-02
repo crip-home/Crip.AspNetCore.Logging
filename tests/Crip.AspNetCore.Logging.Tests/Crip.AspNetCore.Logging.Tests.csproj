@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-    <LangVersion>10</LangVersion>
+    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
+    <LangVersion>11</LangVersion>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

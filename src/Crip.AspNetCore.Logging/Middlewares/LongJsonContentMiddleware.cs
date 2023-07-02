@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Crip.AspNetCore.Logging;
@@ -13,50 +13,35 @@ public class LongJsonContentMiddleware : IRequestContentLogMiddleware
     private const string MaxCharCountInFieldSectionKey = "Logging:Request:MaxCharCountInField";
     private const string LeaveOnTrimSectionKey = "Logging:Request:LeaveOnTrimCharCountInField";
     private readonly IJsonStreamModifier _jsonModifier;
+    private readonly IOptions<RequestLoggingOptions> _options;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LongJsonContentMiddleware"/> class.
     /// </summary>
     /// <param name="jsonModifier">JSON content modifier.</param>
-    /// <param name="configuration">The key/value application configuration properties.</param>
-    public LongJsonContentMiddleware(IJsonStreamModifier jsonModifier, IConfiguration? configuration)
+    /// <param name="options">Request logging options.</param>
+    public LongJsonContentMiddleware(
+        IJsonStreamModifier jsonModifier,
+        IOptions<RequestLoggingOptions> options)
     {
         _jsonModifier = jsonModifier;
-        if (configuration is not null)
-        {
-            MaxCharCountInField = configuration.GetValue(MaxCharCountInFieldSectionKey, 500);
-            LeaveOnTrim = configuration.GetValue(LeaveOnTrimSectionKey, 10);
-        }
-    }
+        _options = options;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LongJsonContentMiddleware"/> class.
-    /// </summary>
-    /// <param name="jsonModifier">JSON content modifier.</param>
-    /// <param name="maxCharCountInField">The maximum character count in field.</param>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// If <paramref name="maxCharCountInField"/> is less than 1.
-    /// </exception>
-    public LongJsonContentMiddleware(IJsonStreamModifier jsonModifier, int maxCharCountInField)
-        : this(jsonModifier, null)
-    {
-        if (maxCharCountInField < 1)
+        if (MaxCharCountInField <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(maxCharCountInField));
+            throw new ArgumentOutOfRangeException(nameof(LongJsonContentOptions.MaxCharCountInField));
         }
-
-        MaxCharCountInField = maxCharCountInField;
     }
 
     /// <summary>
     /// Gets the maximum character count in single field.
     /// </summary>
-    public int MaxCharCountInField { get; } = 500;
+    public uint MaxCharCountInField => _options.Value.LongJsonContent.MaxCharCountInField;
 
     /// <summary>
-    /// Gets or sets the length of content to leave in field, when trimming.
+    /// Gets the length of content to leave in field, when trimming.
     /// </summary>
-    public int LeaveOnTrim { get; set; } = 10;
+    public uint LeaveOnTrim => _options.Value.LongJsonContent.LeaveOnTrimCharCountInField;
 
     /// <inheritdoc/>
     public string ContentType => "application/json";
@@ -105,7 +90,7 @@ public class LongJsonContentMiddleware : IRequestContentLogMiddleware
             case JsonToken.Bytes:
             case JsonToken.String:
                 var val = value.ToString();
-                return val?.Length <= MaxCharCountInField ? val : $"{val?.Substring(0, LeaveOnTrim)}...";
+                return val?.Length <= MaxCharCountInField ? val : $"{val?.Substring(0, (int)LeaveOnTrim)}...";
 
             default:
                 return value;

@@ -1,52 +1,51 @@
-﻿namespace Crip.AspNetCore.Logging.Tests
+﻿namespace Crip.AspNetCore.Logging.Tests.Models;
+
+/// <summary>
+/// IStopwatch interface implementation with fixed value
+/// <see href="https://codereview.stackexchange.com/questions/180217/stopwatch-dependency-for-unit-testing#answer-180265" />
+/// </summary>
+public class MockStopwatch : IStopwatch
 {
-    /// <summary>
-    /// IStopwatch interface implementation with fixed value
-    /// <see href="https://codereview.stackexchange.com/questions/180217/stopwatch-dependency-for-unit-testing#answer-180265" />
-    /// </summary>
-    public class MockStopwatch : IStopwatch
+    public MockStopwatch(params TimeSpan[] intervals)
+        : this(intervals.AsEnumerable())
     {
-        public MockStopwatch(params TimeSpan[] intervals)
-            : this(intervals.AsEnumerable())
-        {
-        }
+    }
 
-        public MockStopwatch(IEnumerable<TimeSpan> intervals)
-        {
-            Interval = intervals
-                .ToList()
-                .GetEnumerator();
+    public MockStopwatch(IEnumerable<TimeSpan> intervals)
+    {
+        Interval = intervals
+            .ToList()
+            .GetEnumerator();
 
-            Reset();
-        }
+        Reset();
+    }
 
-        public IEnumerator<TimeSpan> Interval { get; }
+    public IEnumerator<TimeSpan> Interval { get; }
 
-        public bool IsRunning { get; private set; }
+    public bool IsRunning { get; private set; }
 
-        public TimeSpan Elapsed => IsRunning ? NextElapsed : SameElapsed;
+    public TimeSpan Elapsed => IsRunning ? NextElapsed : SameElapsed;
 
-        public TimeSpan SameElapsed => Interval.Current;
+    public TimeSpan SameElapsed => Interval.Current;
 
-        public TimeSpan NextElapsed => Interval.MoveNext()
-            ? Interval.Current
-            : throw new InvalidOperationException("You did not define enough timestamps.");
+    public TimeSpan NextElapsed => Interval.MoveNext()
+        ? Interval.Current
+        : throw new InvalidOperationException("You did not define enough timestamps.");
 
-        public void Start() => IsRunning = true;
+    public void Start() => IsRunning = true;
 
-        public void Stop() => IsRunning = false;
+    public void Stop() => IsRunning = false;
 
-        public void Restart()
-        {
-            Stop();
-            Reset();
-            Start();
-        }
+    public void Restart()
+    {
+        Stop();
+        Reset();
+        Start();
+    }
 
-        public void Reset()
-        {
-            Interval.Reset();
-            Interval.MoveNext();
-        }
+    public void Reset()
+    {
+        Interval.Reset();
+        Interval.MoveNext();
     }
 }
