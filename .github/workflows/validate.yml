@@ -5,17 +5,17 @@ on:
     branches: [ features/* ]
   pull_request:
     branches:
-      - main
-      - master
+    - main
+    - master
 
 jobs:
   init:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Workflow Action
-        uses: styfle/cancel-workflow-action@0.10.0
-        with:
-          access_token: ${{ github.token }}
+    - name: Cancel Workflow Action
+      uses: styfle/cancel-workflow-action@0.10.0
+      with:
+        access_token: ${{ github.token }}
 
   build:
     env:
@@ -24,21 +24,22 @@ jobs:
     runs-on: ubuntu-latest
     needs: init
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: 📄 checkout
+      uses: actions/checkout@v3
 
-      - name: 🔨 Setup .NET 3.1 & 6.0
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: |
-            3.1.x
-            6.0.x
+    - name: ⬇️ setup .NET 3.1 & 6.0 & 7.0
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: |
+          3.1.x
+          6.0.x
+          7.0.x
 
-      - name: Install dependencies
-        run: dotnet restore $TESTS -v m
+    - name: ⬇️ restore dependencies
+      run: dotnet restore $TESTS -v m
 
-      - name: Build solution
-        run: dotnet build $TESTS --no-restore -c Debug -v m
+    - name: 🛠️ build
+      run: dotnet build $TESTS --no-restore -c Debug -v m
 
-      - name: Test Crip.AspNetCore.Logging.Tests
-        run: dotnet test $TESTS --no-restore --no-build -v m
+    - name: 🧪 test
+      run: dotnet test $TESTS --no-restore --no-build -v m
