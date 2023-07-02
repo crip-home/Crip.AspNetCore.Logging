@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Crip.AspNetCore.Logging;
 
@@ -11,6 +12,7 @@ namespace Crip.AspNetCore.Logging;
 /// <typeparam name="T">Type of the logger instance name.</typeparam>
 public class ContextLogger<T> : IContextLogger
 {
+    private readonly IOptions<RequestLoggingOptions> _options;
     private readonly HttpContext _context;
     private readonly IHttpLogger _httpLogger;
     private readonly ILogger _logger;
@@ -21,14 +23,17 @@ public class ContextLogger<T> : IContextLogger
     /// </summary>
     /// <param name="loggerFactory">Logger instance creator.</param>
     /// <param name="httpLoggerFactory">HTTP request/response logger factory.</param>
+    /// <param name="options">The request logging options.</param>
     /// <param name="context">The request context.</param>
     public ContextLogger(
         ILoggerFactory loggerFactory,
         IHttpLoggerFactory httpLoggerFactory,
+        IOptions<RequestLoggingOptions> options,
         HttpContext context)
     {
         _logger = loggerFactory.ControllerLogger<T>(context);
         _httpLogger = httpLoggerFactory.Create(_logger);
+        _options = options;
         _context = context;
     }
 
@@ -45,6 +50,8 @@ public class ContextLogger<T> : IContextLogger
     /// <inheritdoc cref="IContextLogger" />
     public Task LogResponse(IStopwatch stopwatch)
     {
+        if (_options.Value.LogResponse is false) return Task.CompletedTask;
+
         var request = RequestDetails.From(_context.Request);
         var response = ResponseDetails.From(_context.Response, stopwatch);
         return _httpLogger.LogResponse(request, response);

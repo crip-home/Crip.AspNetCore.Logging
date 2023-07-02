@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Crip.AspNetCore.Logging;
 
@@ -24,6 +25,7 @@ public class ContextLoggerFactory : Factory, IContextLoggerFactory
         return new ContextLogger<T>(
             GetService<ILoggerFactory>(),
             GetService<IHttpLoggerFactory>(),
+            GetService<IOptions<RequestLoggingOptions>>(),
             context);
     }
 }

@@ -53,12 +53,12 @@ Accept: */*
 Accept-Encoding: gzip, deflate, br
 Host: localhost:5000
 Content-Length: 27
-{ "body": "content" }
+  { "body": "content" }
   { Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test.Verbose } { EventName="HttpRequest", Endpoint="http://localhost:5000/api/test/verbose", HttpMethod="POST", RequestId="xxx", RequestPath="/api/test/verbose", SpanId="|xxx.", TraceId="xxx", ParentId="", ConnectionId="xxx" }
 
   [ 12:52:31 VRB ] HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-{ "level": "Verbose" }
+  { "level": "Verbose" }
   { Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test.Verbose } { EventName="HttpResponse", StatusCode=200, Elapsed=6, Endpoint="http://localhost:5000/api/test/verbose", HttpMethod="POST", RequestId="xxx", RequestPath="/api/test/verbose", SpanId="|xxx.", TraceId="xxx", ParentId="", ConnectionId="xxx" }
 
   [ 12:52:31 INF ] POST http://localhost:5000/api/test/verbose at 00:00:00.006 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test.Verbose} {EventName="HttpResponse", StatusCode=200, Elapsed=6, Endpoint="http://localhost:5000/api/test/verbose", HttpMethod="POST", RequestId="xxx", RequestPath="/api/test/verbose", SpanId="|xxx.", TraceId="xxx", ParentId="", ConnectionId="xxx"}
@@ -98,6 +98,14 @@ services.AddLoggableHttpClient<MyHttpClient>();
 ```
 
 ## Configuration options
+
+### Disable response logging
+
+If response content logging is not required - it could be disabled at service registration:
+
+```cs
+services.AddRequestLogging(options => options.LogResponse = false);
+```
 
 ### Change verbosity level to reduce logs
 
@@ -229,6 +237,8 @@ In this case only this method requests/responses will be written to logs.
 > If there is no name for request method (for example, unknown controller),
 > `Crip.AspNetCore.Logging.RequestLoggingMiddleware` context will be used.
 
+---
+
 ### Configure verbosity for HTTP client
 
 When you register client message handler with type `.AddHttpMessageHandler<LoggingHandler<MyHttpClient>>()`, this value
@@ -277,9 +287,26 @@ own needs.
 values replacing `Basic` auth header value with `Basic *****` and `Bearer` auth header value with `Bearer *****`.
 
 ```yaml
-[15:26:52 VRB] GET http://localhost:5000/api/test HTTP/1.1
+[ 15:26:52 VRB ] GET http://localhost:5000/api/test HTTP/1.1
 Connection: keep-alive
 Authorization: Bearer *****
+Host: localhost:5000
+```
+
+To hide custom authorization header value you can configure options (where header name is case insensitive):
+
+```cs
+services
+    .AddRequestLogging(options =>
+    {
+        options.AuthorizationHeaders.AuthorizationHeaderNames.Add("x-auth");
+    })
+```
+
+```yaml
+[ 15:26:52 VRB ] GET http://localhost:5000/api/test HTTP/1.1
+Connection: keep-alive
+Auth-X: Basic *****
 Host: localhost:5000
 ```
 
@@ -292,7 +319,7 @@ services
 ```
 
 ```yaml
-[15:34:27 VRB] GET http://localhost:5000/api/test HTTP/1.1
+[ 15:34:27 VRB ] GET http://localhost:5000/api/test HTTP/1.1
 Connection: keep-alive
 Accept-Encoding: gzip, deflate, br
 Cookie: a=Rtgyhjk456***
@@ -311,17 +338,14 @@ length exceeds 500 characters and will output only first 10 symbols:
 ```
 
 This middleware runs only if request content type is `application/json`. You can change this middleware values within
-configuration file:
+configuration on initialization:
 
-```json
+```cs
+services.AddRequestLogging(options =>
 {
-  "Logging": {
-    "Request": {
-      "MaxCharCountInField": 1000,
-      "LeaveOnTrimCharCountInField": 3
-    }
-  }
-}
+    options.LongJsonContent.MaxCharCountInField = 255;
+    options.LongJsonContent.LeaveOnTrimCharCountInField = 15;
+});
 ```
 
 ---

@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Crip.AspNetCore.Logging;
 
@@ -14,6 +15,7 @@ public class LoggingHandler<T> : LoggingHandler
 {
     private readonly IHttpLoggerFactory _httpLoggerFactory;
     private readonly IMeasurable _measure;
+    private readonly IOptions<RequestLoggingOptions> _options;
     private readonly ILogger _logger;
 
     /// <summary>
@@ -22,10 +24,16 @@ public class LoggingHandler<T> : LoggingHandler
     /// <param name="loggerFactory">The actual log writer.</param>
     /// <param name="measure">The time measure service.</param>
     /// <param name="httpLoggerFactory">The HTTP request/response detail logger.</param>
-    public LoggingHandler(ILoggerFactory loggerFactory, IHttpLoggerFactory httpLoggerFactory, IMeasurable measure)
+    /// <param name="options">The request logging options.</param>
+    public LoggingHandler(
+        ILoggerFactory loggerFactory,
+        IHttpLoggerFactory httpLoggerFactory,
+        IMeasurable measure,
+        IOptions<RequestLoggingOptions> options)
     {
         _httpLoggerFactory = httpLoggerFactory;
         _measure = measure;
+        _options = options;
         _logger = loggerFactory.CreateLogger($"{typeof(LoggingHandler).FullName}.{typeof(T).Name}");
     }
 
@@ -35,7 +43,7 @@ public class LoggingHandler<T> : LoggingHandler
         var httpLogger = _httpLoggerFactory.Create(_logger);
         var measure = _measure.StartMeasure();
         HttpResponseMessage? response = null;
-        RequestDetails requestDetails = RequestDetails.From(request);
+        var requestDetails = RequestDetails.From(request);
         ResponseDetails? responseDetails = null;
         try
         {
@@ -44,8 +52,11 @@ public class LoggingHandler<T> : LoggingHandler
             response = await base.SendAsync(request, ct);
             var stopwatch = measure.StopMeasure();
 
-            responseDetails = ResponseDetails.From(response, stopwatch);
-            await httpLogger.LogResponse(requestDetails, responseDetails);
+            if (_options.Value.LogResponse)
+            {
+                responseDetails = ResponseDetails.From(response, stopwatch);
+                await httpLogger.LogResponse(requestDetails, responseDetails);
+            }
 
             return response;
         }
