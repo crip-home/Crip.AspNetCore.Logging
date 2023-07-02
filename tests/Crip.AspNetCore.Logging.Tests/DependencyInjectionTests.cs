@@ -27,8 +27,6 @@ public class DependencyInjectionTests
         provider.GetService<IResponseLogger>().Should().NotBeNull();
         provider.GetService<IBasicInfoLogger>().Should().NotBeNull();
         provider.GetService<LogContentFactory>().Should().NotBeNull();
-        provider.GetService<IEnumerable<IRequestContentLogMiddleware>>().Should().NotBeNull().And.HaveCount(1);
-        provider.GetService<IJsonStreamModifier>().Should().NotBeNull();
         provider.GetService<LogHeaderFactory>().Should().NotBeNull();
         provider.GetService<IEnumerable<IHeaderLogMiddleware>>().Should().NotBeNull().And.HaveCount(1);
     }

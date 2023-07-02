@@ -1,11 +1,10 @@
 using System;
 
-namespace Crip.AspNetCore.Logging.Core31.Example
-{
-    public class HttpResponseException : ApplicationException
-    {
-        public int Status { get; set; } = 500;
+namespace Crip.AspNetCore.Logging.Core31.Example;
 
-        public object? Value { get; set; }
-    }
+public class HttpResponseException : ApplicationException
+{
+    public int Status { get; set; } = 500;
+
+    public object? Value { get; set; }
 }

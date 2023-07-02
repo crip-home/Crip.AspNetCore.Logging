@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>11</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+        <PackageId>$(AssemblyName)</PackageId>
+        <Version>1.0.0.0</Version>
+        <Authors>TAHQ69</Authors>
+        <Company>CRIP</Company>
+        <Title>$(AssemblyName)</Title>
+        <Description>AspNetCore HTTP request logging - long json content middleware.</Description>
+        <PackageDescription>AspNetCore request logging middleware.</PackageDescription>
+        <RepositoryUrl>https://github.com/crip-home/Crip.AspNetCore.Logging</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/crip-home/Crip.AspNetCore.Logging</PackageProjectUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>AspNetCore, HTTP, log, logging, JSON</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <NoWarn>1701;1702;SA1101;SA1633;SA1200;SA1309;SA1501;SA1503</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="$(AssemblyName).xml"/>
+        <None Include="./README.md" Pack="true" PackagePath="\"/>
+        <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="$(AssemblyName).xml"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Crip.AspNetCore.Logging" Version="2.0.0-rc.7" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="**\*.cs">
+            <DependentUpon>$([System.String]::Copy(I%(Filename).cs))</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+
+</Project>

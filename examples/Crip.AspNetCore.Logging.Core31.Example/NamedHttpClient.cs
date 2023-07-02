@@ -5,34 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Crip.AspNetCore.Logging.Core31.Example
+namespace Crip.AspNetCore.Logging.Core31.Example;
+
+public class NamedHttpClient
 {
-    public class NamedHttpClient
+    private readonly HttpClient _client;
+
+    public NamedHttpClient(HttpClient client)
     {
-        private readonly HttpClient _client;
+        _client = client;
+    }
 
-        public NamedHttpClient(HttpClient client)
+    public async Task<object> Post()
+    {
+        var model = new
         {
-            _client = client;
-        }
+            bar1 = "bazz1",
+            bar2 = "bazz2",
+        };
 
-        public async Task<object> Post()
-        {
-            var model = new
-            {
-                bar1 = "bazz1",
-                bar2 = "bazz2",
-            };
+        var json = JsonConvert.SerializeObject(model);
+        var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-            var json = JsonConvert.SerializeObject(model);
-            var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+        var response = await _client.PostAsync("post?foo1=bar1&foo2=bar2", content);
+        response.EnsureSuccessStatusCode();
 
-            var response = await _client.PostAsync("post?foo1=bar1&foo2=bar2", content);
-            response.EnsureSuccessStatusCode();
+        var body = await response.Content.ReadAsStringAsync();
 
-            var body = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<ExpandoObject>(body);
-        }
+        return JsonConvert.DeserializeObject<ExpandoObject>(body)!;
     }
 }

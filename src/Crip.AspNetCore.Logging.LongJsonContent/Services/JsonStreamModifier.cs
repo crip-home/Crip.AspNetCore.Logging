@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Crip.AspNetCore.Logging;
+namespace Crip.AspNetCore.Logging.LongJsonContent.Services;
 
 /// <summary>
 /// JSON stream modifier.
@@ -13,10 +11,10 @@ public class JsonStreamModifier : IJsonStreamModifier
     public void Modify(
         Stream input,
         Stream output,
-        Func<object?, string?>? propertyKeyFactory = null,
+        Func<object?, string>? propertyKeyFactory = null,
         Func<JsonToken, object?, object?>? propertyValueFactory = null)
     {
-        var getKey = propertyKeyFactory ?? (k => k?.ToString());
+        var getKey = propertyKeyFactory ?? (k => k?.ToString() ?? string.Empty);
         var getValue = propertyValueFactory ?? ((t, v) => v);
 
         using var streamReader = new StreamReader(input);
@@ -32,11 +30,11 @@ public class JsonStreamModifier : IJsonStreamModifier
         output.Seek(0, SeekOrigin.Begin);
     }
 
-    private void AddElement(
+    private static void AddElement(
         JsonWriter writer,
         JsonToken tokenType,
         object? value,
-        Func<object?, string?> getKey,
+        Func<object?, string> getKey,
         Func<JsonToken, object?, object?> getValue)
     {
         switch (tokenType)
@@ -63,11 +61,11 @@ public class JsonStreamModifier : IJsonStreamModifier
         }
     }
 
-    private void AddToken(
+    private static void AddToken(
         JsonWriter writer,
         JsonToken tokenType,
         object? value,
-        Func<object?, string?> getKey,
+        Func<object?, string> getKey,
         Func<JsonToken, object?, object?> getValue)
     {
         if (tokenType == JsonToken.PropertyName)

@@ -328,25 +328,9 @@ Host: localhost:5000
 
 #### IRequestContentLogMiddleware
 
-`LongJsonContentMiddleware` implements `IRequestContentLogMiddleware` interface and will hide properties value if its
-length exceeds 500 characters and will output only first 10 symbols:
-
-```json
-{
-  "fileBase64": "SGVsbG8gV2***"
-}
-```
-
-This middleware runs only if request content type is `application/json`. You can change this middleware values within
-configuration on initialization:
-
-```cs
-services.AddRequestLogging(options =>
-{
-    options.LongJsonContent.MaxCharCountInField = 255;
-    options.LongJsonContent.LeaveOnTrimCharCountInField = 15;
-});
-```
+If you need modify content before you log it - you can implement `IRequestContentLogMiddleware`.
+`Crip.AspNetCore.Logging.LongJsonContent` library provides some implementations for middleware:
+  - `LongJsonContentMiddleware`
 
 ---
 

@@ -35,9 +35,9 @@ public class LogContentFactory
     /// </exception>
     public async Task<string> PrepareBody(string? contentType, Stream content)
     {
-        var ms = new MemoryStream();
-        await content.CopyToAsync(ms);
-        ms.Seek(0, SeekOrigin.Begin);
+        MemoryStream memoryStream = new();
+        await content.CopyToAsync(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
 
         var middlewares = _middlewares
             .Where(x => (contentType?.IndexOf(x.ContentType, Comparison) ?? -1) >= 0)
@@ -45,17 +45,17 @@ public class LogContentFactory
 
         foreach (var middleware in middlewares)
         {
-            var outputStream = new MemoryStream();
-            middleware.Modify(ms, outputStream);
-            ms = outputStream;
-            ms.Seek(0, SeekOrigin.Begin);
+            MemoryStream outputStream = new();
+            middleware.Modify(memoryStream, outputStream);
+            memoryStream = outputStream;
+            memoryStream.Seek(0, SeekOrigin.Begin);
         }
 
-        string text = string.Empty;
-        if (ms.CanRead)
+        var text = string.Empty;
+        if (memoryStream.CanRead)
         {
-            using var sr = new StreamReader(ms);
-            text = await sr.ReadToEndAsync();
+            using StreamReader streamReader = new(memoryStream);
+            text = await streamReader.ReadToEndAsync();
         }
 
         if (!string.IsNullOrWhiteSpace(text))

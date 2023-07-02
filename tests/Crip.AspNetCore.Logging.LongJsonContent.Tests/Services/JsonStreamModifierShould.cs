@@ -1,9 +1,12 @@
 ﻿using System.Text;
+using Crip.AspNetCore.Logging.LongJsonContent.Services;
 
-namespace Crip.AspNetCore.Logging.Tests.Services;
+namespace Crip.AspNetCore.Logging.LongJsonContent.Tests.Services;
 
-public class JsonStreamModifierTests
+public class JsonStreamModifierShould
 {
+    private readonly IJsonStreamModifier _modifier = new JsonStreamModifier();
+
     [Theory, Trait("Category", "Unit")]
     [InlineData("")]
     [InlineData("[]")]
@@ -14,19 +17,14 @@ public class JsonStreamModifierTests
     [InlineData("{\"key\":\"value\"}")]
     public void JsonStreamModifier_Modify_WritesAsOriginal(string data)
     {
-        // Arrange
-        IJsonStreamModifier sut = new JsonStreamModifier();
-
         var bytes = Encoding.UTF8.GetBytes(data);
         var input = new MemoryStream(bytes);
         var output = new MemoryStream();
 
-        // Act
-        sut.Modify(input, output);
+        _modifier.Modify(input, output);
         using var reader = new StreamReader(output);
         var text = reader.ReadToEnd();
 
-        // Assert
         text.Should().Be(data);
     }
 
@@ -36,21 +34,16 @@ public class JsonStreamModifierTests
     [InlineData("{\"key\":true}")]
     [InlineData("{\"key\":1.2}")]
     [InlineData("{\"key\":\"value\"}")]
-    public void JsonContentBuilder_Build_CustomValue(string data)
+    public void Modify_CustomValue(string data)
     {
-        // Arrange
-        IJsonStreamModifier sut = new JsonStreamModifier();
-
         var bytes = Encoding.UTF8.GetBytes(data);
         var input = new MemoryStream(bytes);
         var output = new MemoryStream();
 
-        // Act
-        sut.Modify(input, output, null, (t, v) => "value");
+        _modifier.Modify(input, output, null, (t, v) => "value");
         using var reader = new StreamReader(output);
         var text = reader.ReadToEnd();
 
-        // Assert
         text.Should().Be("{\"key\":\"value\"}");
     }
 
@@ -59,21 +52,16 @@ public class JsonStreamModifierTests
     [InlineData("{\"b\":\"value\"}")]
     [InlineData("{\"c\":\"value\"}")]
     [InlineData("{1:\"value\"}")]
-    public void JsonContentBuilder_Build_CustomKey(string data)
+    public void Modify_CustomKey(string data)
     {
-        // Arrange
-        IJsonStreamModifier sut = new JsonStreamModifier();
-
         var bytes = Encoding.UTF8.GetBytes(data);
         var input = new MemoryStream(bytes);
         var output = new MemoryStream();
 
-        // Act
-        sut.Modify(input, output, k => "key");
+        _modifier.Modify(input, output, k => "key");
         using var reader = new StreamReader(output);
         var text = reader.ReadToEnd();
 
-        // Assert
         text.Should().Be("{\"key\":\"value\"}");
     }
 }

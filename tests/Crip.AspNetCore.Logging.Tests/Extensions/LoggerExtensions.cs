@@ -20,7 +20,7 @@ public static class LoggerExtensions
             It.IsAny<EventId>(),
             It.Is<It.IsAnyType>((v, t) => state(v, t)),
             It.IsAny<Exception>(),
-            It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), (Times)times);
+            It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)), (Times)times);
 
         return loggerMock;
     }
