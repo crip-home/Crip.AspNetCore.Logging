@@ -1,17 +1,15 @@
 using System.Dynamic;
-using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Crip.AspNetCore.Logging.Core31.Example;
+namespace Crip.AspNetCore.Logging.Core60.Example;
 
-public class NamedHttpClient
+public class MyTypedClient
 {
     private readonly HttpClient _client;
 
-    public NamedHttpClient(HttpClient client)
+    public MyTypedClient(HttpClient client)
     {
         _client = client;
     }

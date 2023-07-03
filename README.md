@@ -53,12 +53,12 @@ Accept: */*
 Accept-Encoding: gzip, deflate, br
 Host: localhost:5000
 Content-Length: 27
-  { "body": "content" }
+                  { "body": "content" }
   { Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test.Verbose } { EventName="HttpRequest", Endpoint="http://localhost:5000/api/test/verbose", HttpMethod="POST", RequestId="xxx", RequestPath="/api/test/verbose", SpanId="|xxx.", TraceId="xxx", ParentId="", ConnectionId="xxx" }
 
   [ 12:52:31 VRB ] HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-  { "level": "Verbose" }
+                { "level": "Verbose" }
   { Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test.Verbose } { EventName="HttpResponse", StatusCode=200, Elapsed=6, Endpoint="http://localhost:5000/api/test/verbose", HttpMethod="POST", RequestId="xxx", RequestPath="/api/test/verbose", SpanId="|xxx.", TraceId="xxx", ParentId="", ConnectionId="xxx" }
 
   [ 12:52:31 INF ] POST http://localhost:5000/api/test/verbose at 00:00:00.006 with 200 OK {Crip.AspNetCore.Logging.RequestLoggingMiddleware.Test.Verbose} {EventName="HttpResponse", StatusCode=200, Elapsed=6, Endpoint="http://localhost:5000/api/test/verbose", HttpMethod="POST", RequestId="xxx", RequestPath="/api/test/verbose", SpanId="|xxx.", TraceId="xxx", ParentId="", ConnectionId="xxx"}
@@ -277,14 +277,13 @@ Or create your own `IHttpRequestPredicate` implementation and add it to service 
 
 ### Filter logged content
 
-By default `AuthorizationHeaderLoggingMiddleware` and `LongJsonContentMiddleware` are added in to logger. You can create
-own implementations of the `IHeaderLogMiddleware` or `IRequestContentLogMiddleware` to modify logged content for your
-own needs.
+By default `AuthorizationHeaderLoggingMiddleware` is added to DI. You can create your own implementations of
+the `IHeaderLogMiddleware` or `IRequestContentLogMiddleware` to modify logged content for your own needs.
 
 #### IHeaderLogMiddleware
 
 `AuthorizationHeaderLoggingMiddleware` implements `IHeaderLogMiddleware` interface and will hide Authorization header
-values replacing `Basic` auth header value with `Basic *****` and `Bearer` auth header value with `Bearer *****`.
+values replacing value with `*****`.
 
 ```yaml
 [ 15:26:52 VRB ] GET http://localhost:5000/api/test HTTP/1.1
@@ -306,7 +305,7 @@ services
 ```yaml
 [ 15:26:52 VRB ] GET http://localhost:5000/api/test HTTP/1.1
 Connection: keep-alive
-Auth-X: Basic *****
+X-Auth: Basic *****
 Host: localhost:5000
 ```
 
@@ -330,9 +329,12 @@ Host: localhost:5000
 
 If you need modify content before you log it - you can implement `IRequestContentLogMiddleware`.
 `Crip.AspNetCore.Logging.LongJsonContent` library provides some implementations for middleware:
-  - `LongJsonContentMiddleware`
+
+- `LongJsonContentMiddleware`
 
 ---
 
-For more technical details take a look
-in [example project Startup file](./examples/Crip.AspNetCore.Logging.Core31.Example/Startup.cs).
+For more technical details take a look in example projects:  
+- [netcoreapp3.1 example](./examples/Crip.AspNetCore.Logging.Core31.Example/Startup.cs)
+- [net6.0 example](./examples/Crip.AspNetCore.Logging.Core60.Example/Program.cs)
+- [net7.0 example](./examples/Crip.AspNetCore.Logging.Core70.Example/Program.cs)

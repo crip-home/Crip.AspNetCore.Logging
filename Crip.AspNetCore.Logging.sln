@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.Lon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.LongJsonContent.Tests", "tests\Crip.AspNetCore.Logging.LongJsonContent.Tests\Crip.AspNetCore.Logging.LongJsonContent.Tests.csproj", "{181AD778-7C8B-4C66-B3B8-3100694B6E1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crip.AspNetCore.Logging.Core70.Example", "examples\Crip.AspNetCore.Logging.Core70.Example\Crip.AspNetCore.Logging.Core70.Example.csproj", "{9A6D648C-484C-4EAE-8923-8C3BC1E19AD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{181AD778-7C8B-4C66-B3B8-3100694B6E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{181AD778-7C8B-4C66-B3B8-3100694B6E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{181AD778-7C8B-4C66-B3B8-3100694B6E1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A6D648C-484C-4EAE-8923-8C3BC1E19AD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A6D648C-484C-4EAE-8923-8C3BC1E19AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A6D648C-484C-4EAE-8923-8C3BC1E19AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A6D648C-484C-4EAE-8923-8C3BC1E19AD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{F1AA9014-B78F-421A-88C8-CDBBE4F47B44} = {00E0B9FD-547F-4BDA-B256-686EB3F72980}
 		{B1F15BC1-14C5-4DBA-A773-67D0D4B3714A} = {06B1752D-5385-48B9-BF69-41DFDD43E6C9}
 		{181AD778-7C8B-4C66-B3B8-3100694B6E1B} = {00E0B9FD-547F-4BDA-B256-686EB3F72980}
+		{9A6D648C-484C-4EAE-8923-8C3BC1E19AD5} = {06B1752D-5385-48B9-BF69-41DFDD43E6C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4238F09D-9390-4968-9F7E-91CB3EF992DA}

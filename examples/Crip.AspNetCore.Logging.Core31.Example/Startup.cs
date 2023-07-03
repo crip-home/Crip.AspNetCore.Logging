@@ -34,19 +34,20 @@ public class Startup
             .AddRequestLoggingLongJson(options =>
             {
                 // Maximum allowed characters in a json string property.
-                options.MaxCharCountInField = 500;
+                options.MaxCharCountInField = 50;
+
                 // Character count to leave in a field after it is trimmed.
                 options.LeaveOnTrimCharCountInField = 10;
             })
             // Hide cookie header values in log messages
             .AddRequestLoggingCookieValueMiddleware()
             // Do not log if request path matches provided pattern.
-            .AddRequestLoggingExclude("/api/test/pattern-exclude*", "/api/test/exact-exclude");
+            .AddRequestLoggingExclude("/favicon.ico", "/api/test/pattern-exclude*", "/api/test/exact-exclude");
 
         // Register HTTP client and write all request logs
         // As an alternative, could be used handler `.AddHttpMessageHandler<LoggingHandler<NamedHttpClient>>()`
         // but in such case make sure you register `.AddRequestLoggingHandler()` in DI.
-        services.AddLoggableHttpClient<NamedHttpClient>(client =>
+        services.AddLoggableHttpClient<MyTypedClient>(client =>
         {
             client.BaseAddress = new Uri("http://postman-echo.com/");
         });

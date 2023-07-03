@@ -1,6 +1,4 @@
-using System;
-
-namespace Crip.AspNetCore.Logging.Core31.Example;
+namespace Crip.AspNetCore.Logging.Core60.Example;
 
 public class HttpResponseException : Exception
 {

@@ -32,6 +32,6 @@ public static class DependencyInjection
         return services
             .Configure(configureOptions)
             .AddSingleton<IJsonStreamModifier, JsonStreamModifier>()
-            .AddScoped<IRequestContentLogMiddleware, LongJsonContentMiddleware>();
+            .AddSingleton<IRequestContentLogMiddleware, LongJsonContentMiddleware>();
     }
 }

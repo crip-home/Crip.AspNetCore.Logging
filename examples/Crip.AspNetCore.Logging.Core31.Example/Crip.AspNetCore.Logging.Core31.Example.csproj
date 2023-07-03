@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Crip.AspNetCore.Logging" Version="2.0.0-rc.10" />
-    <PackageReference Include="Crip.AspNetCore.Logging.LongJsonContent" Version="1.0.0-rc.6" />
+    <PackageReference Include="Crip.AspNetCore.Logging" Version="2.0.0-rc.11" />
+    <PackageReference Include="Crip.AspNetCore.Logging.LongJsonContent" Version="1.0.0-rc.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
