@@ -1,19 +1,19 @@
-﻿using System;
-using System.IO;
+﻿using Crip.AspNetCore.Logging.LongJsonContent.Configuration;
+using Crip.AspNetCore.Logging.LongJsonContent.Services;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace Crip.AspNetCore.Logging;
+namespace Crip.AspNetCore.Logging.LongJsonContent;
 
 /// <summary>
 /// JSON content middleware. Trims property values if it exceeds max value.
 /// </summary>
 public class LongJsonContentMiddleware : IRequestContentLogMiddleware
 {
-    private const string MaxCharCountInFieldSectionKey = "Logging:Request:MaxCharCountInField";
-    private const string LeaveOnTrimSectionKey = "Logging:Request:LeaveOnTrimCharCountInField";
+    private const string ApplicationJson = "application/json";
+
     private readonly IJsonStreamModifier _jsonModifier;
-    private readonly IOptions<RequestLoggingOptions> _options;
+    private readonly IOptions<LongJsonContentOptions> _options;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LongJsonContentMiddleware"/> class.
@@ -22,7 +22,7 @@ public class LongJsonContentMiddleware : IRequestContentLogMiddleware
     /// <param name="options">Request logging options.</param>
     public LongJsonContentMiddleware(
         IJsonStreamModifier jsonModifier,
-        IOptions<RequestLoggingOptions> options)
+        IOptions<LongJsonContentOptions> options)
     {
         _jsonModifier = jsonModifier;
         _options = options;
@@ -36,21 +36,21 @@ public class LongJsonContentMiddleware : IRequestContentLogMiddleware
     /// <summary>
     /// Gets the maximum character count in single field.
     /// </summary>
-    public uint MaxCharCountInField => _options.Value.LongJsonContent.MaxCharCountInField;
+    public uint MaxCharCountInField => _options.Value.MaxCharCountInField;
 
     /// <summary>
     /// Gets the length of content to leave in field, when trimming.
     /// </summary>
-    public uint LeaveOnTrim => _options.Value.LongJsonContent.LeaveOnTrimCharCountInField;
+    public uint LeaveOnTrim => _options.Value.LeaveOnTrimCharCountInField;
 
     /// <inheritdoc/>
-    public string ContentType => "application/json";
+    public string ContentType => ApplicationJson;
 
     /// <inheritdoc/>
     public void Modify(Stream input, Stream output)
     {
         input.Seek(0, SeekOrigin.Begin);
-        var clone = new MemoryStream();
+        MemoryStream clone = new();
         input.CopyTo(clone);
 
         try
@@ -69,8 +69,8 @@ public class LongJsonContentMiddleware : IRequestContentLogMiddleware
         }
     }
 
-    private string? GetKey(object? key) =>
-        key?.ToString();
+    private static string GetKey(object? key) =>
+        key?.ToString() ?? string.Empty;
 
     /// <summary>
     /// We will trim Bytes|String value the MaxCharCountInField length.
@@ -80,17 +80,14 @@ public class LongJsonContentMiddleware : IRequestContentLogMiddleware
     /// <returns>Updated or original value.</returns>
     private object? GetValue(JsonToken tokenType, object? value)
     {
-        if (value is null)
-        {
-            return null;
-        }
+        if (value is null) return null;
 
         switch (tokenType)
         {
             case JsonToken.Bytes:
             case JsonToken.String:
-                var val = value.ToString();
-                return val?.Length <= MaxCharCountInField ? val : $"{val?.Substring(0, (int)LeaveOnTrim)}...";
+                var text = value.ToString();
+                return text?.Length <= MaxCharCountInField ? text : $"{text?.Substring(0, (int)LeaveOnTrim)}...";
 
             default:
                 return value;

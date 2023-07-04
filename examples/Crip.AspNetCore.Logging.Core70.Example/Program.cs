@@ -4,6 +4,7 @@ using Crip.AspNetCore.Logging.LongJsonContent;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Host.UseSerilog((context, configuration) => configuration
     .WriteTo.Console(outputTemplate: "{Timestamp:o} [{Level:u3}] {Message}{NewLine}{Properties}{NewLine}{Exception}")
     .ReadFrom.Configuration(context.Configuration));
@@ -56,6 +57,7 @@ var app = builder.Build();
 // Register middleware to log requests
 app.UseRequestLoggingMiddleware();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

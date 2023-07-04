@@ -1,4 +1,4 @@
-﻿namespace Crip.AspNetCore.Logging;
+﻿namespace Crip.AspNetCore.Logging.LongJsonContent.Configuration;
 
 /// <summary>
 /// Long JSON content middleware options.

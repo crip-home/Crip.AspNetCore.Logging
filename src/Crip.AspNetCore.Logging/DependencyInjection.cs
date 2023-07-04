@@ -28,17 +28,15 @@ public static class DependencyInjection
         services
             .Configure(configureOptions)
             .AddSingleton<IMeasurable, TimeMeasurable>()
-            .AddSingleton<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>()
-            .AddSingleton<LogHeaderFactory>()
-            .AddSingleton<LogContentFactory>()
-            .AddSingleton<IJsonStreamModifier, JsonStreamModifier>()
-            .AddSingleton<IBasicInfoLogger, BasicInfoLogger>()
-            .AddScoped<IContextLoggerFactory, ContextLoggerFactory>()
-            .AddScoped<IRequestLogger, RequestLogger>()
-            .AddScoped<IResponseLogger, ResponseLogger>()
             .AddTransient<IStopwatch, LoggingStopwatch>()
+            .AddTransient<IContextLoggerFactory, ContextLoggerFactory>()
             .AddTransient<IHttpLoggerFactory, HttpLoggerFactory>()
-            .AddTransient<IRequestContentLogMiddleware, LongJsonContentMiddleware>();
+            .AddTransient<IRequestLogger, RequestLogger>()
+            .AddTransient<IResponseLogger, ResponseLogger>()
+            .AddTransient<IBasicInfoLogger, BasicInfoLogger>()
+            .AddTransient<LogContentFactory>()
+            .AddTransient<LogHeaderFactory>()
+            .AddTransient<IHeaderLogMiddleware, AuthorizationHeaderLoggingMiddleware>();
 
     /// <summary>
     /// Adds endpoint patterns to ignore them from logging handler.

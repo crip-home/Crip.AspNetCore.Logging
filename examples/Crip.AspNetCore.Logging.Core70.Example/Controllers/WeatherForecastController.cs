@@ -1,27 +1,34 @@
-using System;
-using System.Net.Mime;
-using System.Threading.Tasks;
+using Crip.AspNetCore.Logging.Core60.Example;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Crip.AspNetCore.Logging.Core31.Example.Controllers;
+namespace Crip.AspNetCore.Logging.Core70.Example.Controllers;
 
-[Produces(MediaTypeNames.Application.Json)]
 [ApiController]
-[Route("api/[controller]")]
-public class TestController : ControllerBase
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
 {
+    private static readonly string[] Summaries =
+    {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
+
     private readonly MyTypedClient _client;
 
-    public TestController(MyTypedClient client)
+    public WeatherForecastController(MyTypedClient client)
     {
         _client = client;
     }
 
-    [HttpGet]
-    public IActionResult Index()
-    {
-        return Ok(new { shouldAppear = true });
-    }
+    [HttpGet(Name = "GetWeatherForecast")]
+    public IEnumerable<WeatherForecast> Get() =>
+        Enumerable.Range(1, 5)
+            .Select(index => new WeatherForecast
+            {
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
 
     [HttpGet(template: "client")]
     public async Task<IActionResult> Client()

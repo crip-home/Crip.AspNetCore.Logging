@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Serialization;
-
-namespace Crip.AspNetCore.Logging;
+﻿namespace Crip.AspNetCore.Logging;
 
 /// <summary>
 /// Request logging configuration.
@@ -16,9 +14,4 @@ public record RequestLoggingOptions
     /// Gets or sets Authorization header middleware options.
     /// </summary>
     public AuthorizationHeaderOptions AuthorizationHeaders { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets long JSON content middleware options.
-    /// </summary>
-    public LongJsonContentOptions LongJsonContent { get; set; } = new();
 }

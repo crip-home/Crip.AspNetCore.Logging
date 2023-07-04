@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Crip.AspNetCore.Logging;
+namespace Crip.AspNetCore.Logging.LongJsonContent.Services;
 
 /// <summary>
 /// JSON stream modifier contract.
@@ -20,6 +18,6 @@ public interface IJsonStreamModifier
     void Modify(
         Stream input,
         Stream output,
-        Func<object?, string?>? propertyKeyFactory = null,
+        Func<object?, string>? propertyKeyFactory = null,
         Func<JsonToken, object?, object?>? propertyValueFactory = null);
 }

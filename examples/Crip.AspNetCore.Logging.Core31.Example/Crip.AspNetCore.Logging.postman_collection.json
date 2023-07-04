@@ -269,7 +269,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"body\": \"content\"\r\n}",
+					"raw": "{\r\n    \"body\": \"content\",\r\n    \"long\": \"{{$randomLoremParagraphs}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

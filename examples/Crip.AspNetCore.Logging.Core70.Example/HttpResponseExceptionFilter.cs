@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Crip.AspNetCore.Logging.Core31.Example;
+namespace Crip.AspNetCore.Logging.Core60.Example;
 
 public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
 {

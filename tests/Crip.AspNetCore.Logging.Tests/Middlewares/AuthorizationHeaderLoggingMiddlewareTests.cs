@@ -7,7 +7,8 @@ public class AuthorizationHeaderLoggingMiddlewareTests
     [Theory, Trait("Category", "Unit")]
     [InlineData("Authorization", "Basic *secret value*", "Basic *****")]
     [InlineData("Authorization", "Bearer *secret value*", "Bearer *****")]
-    [InlineData("Authorization", "Digest *secret value*", "Digest *secret value*")]
+    [InlineData("Authorization", "Digest *secret value*", "Digest *****")]
+    [InlineData("Authorization", "Secret *secret value*", "*****")]
     [InlineData("X-Authorization", "Basic *secret value*", "Basic *secret value*")]
     public void Modify(string key, string value, string expected)
     {
@@ -26,9 +27,13 @@ public class AuthorizationHeaderLoggingMiddlewareTests
     [InlineData("authorization", "Basic *secret value*", "Basic *****")]
     [InlineData("Authorization", "Bearer *secret value*", "Bearer *****")]
     [InlineData("authorization", "Bearer *secret value*", "Bearer *****")]
-    [InlineData("Authorization", "Digest *secret value*", "Digest *secret value*")]
+    [InlineData("Authorization", "Secret *secret value*", "*****")]
+    [InlineData("authorization", "Secret *secret value*", "*****")]
+    [InlineData("Authorization", "Digest *secret value*", "Digest *****")]
     [InlineData("X-Authorization", "Basic *secret value*", "Basic *****")]
     [InlineData("x-authorization", "Basic *secret value*", "Basic *****")]
+    [InlineData("X-Authorization", "Secret *secret value*", "*****")]
+    [InlineData("x-authorization", "Secret *secret value*", "*****")]
     public void ModifyCustomized(string key, string value, string expected)
     {
         // Arrange

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Options;
 
 namespace Crip.AspNetCore.Logging;
@@ -11,6 +13,7 @@ namespace Crip.AspNetCore.Logging;
 /// </remarks>
 public class AuthorizationHeaderLoggingMiddleware : IHeaderLogMiddleware
 {
+    private const string Mask = "*****";
     private const StringComparison Comparison = StringComparison.InvariantCultureIgnoreCase;
 
     private readonly IOptions<RequestLoggingOptions> _options;
@@ -24,17 +27,12 @@ public class AuthorizationHeaderLoggingMiddleware : IHeaderLogMiddleware
         _options = options;
     }
 
-    /// <inheritdoc/>
-    public string Modify(string key, string value)
-    {
-        foreach (var authKey in _options.Value.AuthorizationHeaders.AuthorizationHeaderNames)
-        {
-            if (key.Equals(authKey, Comparison) && value.StartsWith("Basic ", Comparison))
-                return "Basic *****";
-            if (key.Equals(authKey, Comparison) && value.StartsWith("Bearer ", Comparison))
-                return "Bearer *****";
-        }
+    private IEnumerable<string> HeaderNames => _options.Value.AuthorizationHeaders.AuthorizationHeaderNames;
+    private IEnumerable<string> Masks => _options.Value.AuthorizationHeaders.AuthorizationHeaderMasks;
 
-        return value;
-    }
+    /// <inheritdoc/>
+    public string Modify(string key, string value) =>
+        HeaderNames.Any(authKey => authKey.Equals(key, Comparison))
+            ? $"{Masks.FirstOrDefault(mask => value.StartsWith(mask, Comparison))}{Mask}"
+            : value;
 }

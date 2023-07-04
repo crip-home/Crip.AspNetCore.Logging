@@ -25,5 +25,7 @@ public abstract class Factory
     /// <typeparam name="T">The type of service object to get.</typeparam>
     /// <returns>A service object of type <typeparamref name="T"/>.</returns>
     /// <exception cref="System.InvalidOperationException">There is no service of type <typeparamref name="T"/>.</exception>
-    protected T GetService<T>() => _services.GetRequiredService<T>();
+    protected T GetService<T>()
+        where T : notnull
+        => _services.GetRequiredService<T>();
 }
